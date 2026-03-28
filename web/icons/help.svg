@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <defs>
+        <radialGradient id="helpGrad" cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
+            <stop offset="0%" style="stop-color:#25f20f;stop-opacity:1" />
+            <stop offset="60%" style="stop-color:#107c10;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#021a02;stop-opacity:1" />
+        </radialGradient>
+        <filter id="neonHelp" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+    </defs>
+    <circle cx="50" cy="50" r="46" fill="url(#helpGrad)" stroke="#25f20f" stroke-width="1" />
+    <text x="50" y="68" font-family="Arial, sans-serif" font-size="50" font-weight="bold" fill="#050505" text-anchor="middle" filter="url(#neonHelp)" opacity="0.8">?</text>
+    <ellipse cx="50" cy="25" rx="25" ry="12" fill="#ffffff" opacity="0.3" />
+</svg>

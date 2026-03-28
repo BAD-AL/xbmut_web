@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60" viewBox="0 0 200 60" preserveAspectRatio="none">
+    <defs>
+        <!-- Main Button Gradient -->
+        <linearGradient id="btnGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#1a9a1a;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#107c10;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#084d08;stop-opacity:1" />
+        </linearGradient>
+        
+        <!-- Top Shine/Bevel -->
+        <linearGradient id="shine" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.4" />
+            <stop offset="40%" style="stop-color:#ffffff;stop-opacity:0.1" />
+            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+        </linearGradient>
+    </defs>
+
+    <!-- Base Shape -->
+    <rect x="2" y="2" width="196" height="56" rx="10" fill="url(#btnGrad)" stroke="#25f20f" stroke-width="2" />
+    
+    <!-- Inner Shine -->
+    <rect x="5" y="5" width="190" height="25" rx="6" fill="url(#shine)" />
+    
+    <!-- Subtle X Watermark (Right side) -->
+    <g opacity="0.1" transform="translate(160, 30) scale(0.8)">
+        <path d="M-15,-15 L15,15 M15,-15 L-15,15" stroke="#ffffff" stroke-width="8" stroke-linecap="round" />
+    </g>
+</svg>
