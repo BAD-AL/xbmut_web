@@ -1,7 +1,14 @@
 # XBMUT Web Interface
 
-This project is a single-page, no-framework web application built with Dart that provides a user-friendly interface for the Xbox Memory Unit Tool (`xbmut`). It allows users to manage their XEMU memory card files (`.bin`) and import/export save data (`.zip`) directly from their browser.
+Use it here: https://BAD-AL.github.io/xbmut_web/
 
+Web front-end for project: https://github.com/BAD-AL/xbox_memory_unit_tool 
+
+
+This project is a single-page, web application built with Dart that provides a user-friendly interface for the Xbox Memory Unit Tool (`xbmut`). It allows users to manage their XEMU memory card files (`.bin, .img`) and import/export save data (`.zip`) directly from their browser.
+
+![XBMUT web welcome](Welcome.png)
+![XBMUT web Save file selected](SaveSelected.png)
 ## Features
 
 *   **Load Memory Unit:** Drag and drop `.bin` files or use the browse button to load your XEMU memory card.
@@ -35,7 +42,7 @@ This project is a single-page, no-framework web application built with Dart that
     ```
     This command will compile the Dart code into JavaScript, generating the necessary files in the `web/` directory (specifically `main.dart.js`).
 
-### Running the Application
+### Running the Application (development)
 
 After building, you can serve the `web/` directory using any static file server. For example, using `web_http_server`.
 
