@@ -1,0 +1,67 @@
+# Dart quick commands reminder
+
+# Create a new package (console application):
+dart create -t console-full my_app
+
+# Create a new package (web application):
+dart create -t web my_app
+
+# Get dependencies:
+dart pub get
+
+# Upgrade standard Dart project
+dart pub upgrade <package_name>
+dart pub upgrade xbox_memory_unit_tool
+
+
+# Upgrade a Flutter project
+flutter pub upgrade <package_name>
+
+# Add a dependency:
+dart pub add <package_name>
+
+# Run a Dart script or package executable:
+dart run bin/nfl2k5tool.dart <args>
+
+# Run tests (verbose):
+dart test -r expanded
+
+# Run tests in sequence, not in parallel
+dart test --concurrency=1
+
+# Run a single test file:
+dart test test/pack_integration_test.dart
+
+# Format code:
+dart format .
+
+# Analyze static issues:
+dart analyze
+
+# Build an executable for the current platform:
+dart compile exe bin/nfl2k5tool.dart -o nfl2k5tool
+
+# Create a self-contained snapshot (AOT):
+dart compile aot-snapshot bin/nfl2k5tool.dart -o bin/nfl2k5tool.aot
+
+# Create a native Linux executable (on Linux):
+dart compile exe bin/nfl2k5tool.dart -o build/nfl2k5tool
+
+# Create a tarball for distribution (example):
+tar -czvf nfl2k5tool.tar.gz build/
+
+# Publish a package to pub.dev (ensure version updated and pubspec ready):
+dart pub publish --dry-run
+dart pub publish
+
+# Helpful: show Dart SDK version
+dart --version
+
+
+1. Build the application:
+1     dart run build_runner build --delete-conflicting-outputs
+2. Serve the `web/` directory:
+1     dart pub global activate web_http_server
+2     web_http_server --port 8080 web/
+3. Open your browser:
+    Navigate to http://localhost:8080.

@@ -20,7 +20,24 @@ class WebXbmutApp {
   late final web.HTMLDivElement _helpOverlay;
   late final web.HTMLInputElement _fileInput;
   late final web.HTMLDivElement _dropzone;
-  late final web.HTMLDivElement _muInfo;
+
+  // Alert/Toast elements
+  late final web.HTMLDivElement _alertOverlay;
+  late final web.HTMLElement _alertTitle;
+  late final web.HTMLElement _alertMessage;
+  late final web.HTMLButtonElement _alertClose;
+  late final web.HTMLDivElement _confirmOverlay;
+  late final web.HTMLElement _confirmTitle;
+  late final web.HTMLElement _confirmMessage;
+  late final web.HTMLButtonElement _confirmYes;
+  late final web.HTMLButtonElement _confirmNo;
+  late final web.HTMLDivElement _toast;
+  late final web.HTMLElement _toastMessage;
+
+  // Header info elements
+  late final web.HTMLElement _infoDevice;
+  late final web.HTMLElement _infoCapacity;
+  late final web.HTMLElement _infoUsed;
 
   // Detail view elements
   late final web.HTMLElement _viewGame;
@@ -37,7 +54,24 @@ class WebXbmutApp {
     _helpOverlay = web.document.querySelector('#help-overlay') as web.HTMLDivElement;
     _fileInput = web.document.querySelector('#file-input') as web.HTMLInputElement;
     _dropzone = web.document.querySelector('.dropzone') as web.HTMLDivElement;
-    _muInfo = web.document.querySelector('.mu-info') as web.HTMLDivElement;
+
+    _alertOverlay = web.document.querySelector('#alert-overlay') as web.HTMLDivElement;
+    _alertTitle = web.document.querySelector('#alert-title') as web.HTMLElement;
+    _alertMessage = web.document.querySelector('#alert-message') as web.HTMLElement;
+    _alertClose = web.document.querySelector('#alert-close') as web.HTMLButtonElement;
+
+    _confirmOverlay = web.document.querySelector('#confirm-overlay') as web.HTMLDivElement;
+    _confirmTitle = web.document.querySelector('#confirm-title') as web.HTMLElement;
+    _confirmMessage = web.document.querySelector('#confirm-message') as web.HTMLElement;
+    _confirmYes = web.document.querySelector('#confirm-yes') as web.HTMLButtonElement;
+    _confirmNo = web.document.querySelector('#confirm-no') as web.HTMLButtonElement;
+
+    _toast = web.document.querySelector('#toast') as web.HTMLDivElement;
+    _toastMessage = web.document.querySelector('#toast-message') as web.HTMLElement;
+
+    _infoDevice = web.document.querySelector('#info-device') as web.HTMLElement;
+    _infoCapacity = web.document.querySelector('#info-capacity') as web.HTMLElement;
+    _infoUsed = web.document.querySelector('#info-used') as web.HTMLElement;
 
     _viewGame = web.document.querySelector('#view-game') as web.HTMLElement;
     _viewSave = web.document.querySelector('#view-save') as web.HTMLElement;
@@ -57,21 +91,81 @@ class WebXbmutApp {
     }.toJS);
   }
 
-  void _exportAll() {
+  void _showModal(String title, String message) {
+    _alertTitle.textContent = title;
+    _alertMessage.textContent = message;
+    _alertOverlay.style.display = 'flex';
+  }
+
+  Future<bool> _showConfirm(String title, String message) {
+    final completer = Completer<bool>();
+    _confirmTitle.textContent = title;
+    _confirmMessage.textContent = message;
+    _confirmOverlay.style.display = 'flex';
+
+    late web.EventListener yesListener;
+    late web.EventListener noListener;
+
+    yesListener = (web.Event e) {
+      _confirmOverlay.style.display = 'none';
+      _confirmYes.removeEventListener('click', yesListener);
+      _confirmNo.removeEventListener('click', noListener);
+      completer.complete(true);
+    }.toJS;
+
+    noListener = (web.Event e) {
+      _confirmOverlay.style.display = 'none';
+      _confirmYes.removeEventListener('click', yesListener);
+      _confirmNo.removeEventListener('click', noListener);
+      completer.complete(false);
+    }.toJS;
+
+    _confirmYes.addEventListener('click', yesListener);
+    _confirmNo.addEventListener('click', noListener);
+
+    return completer.future;
+  }
+
+  void _showToast(String message) {
+    _toastMessage.textContent = message;
+    _toast.style.display = 'flex';
+    Timer(const Duration(seconds: 3), () {
+      _toast.style.display = 'none';
+    });
+  }
+
+  Future<void> _exportAll() async {
     if (_mu == null) {
-      web.window.alert('No Memory Unit loaded.');
+      _showModal('Error', 'No Memory Unit loaded.');
       return;
     }
+    
+    final btn = web.document.querySelector('#export-all-btn') as web.HTMLButtonElement;
+    final textSpan = btn.querySelector('span') as web.HTMLElement;
+    final originalText = textSpan.textContent;
+    textSpan.textContent = 'Processing...';
+    btn.disabled = true;
+
+    // Allow UI to update
+    await Future.delayed(const Duration(milliseconds: 100));
+
     try {
-      //final bytes = _mu!.export('all');
       final bytes = _mu!.exportAll();
       _downloadFile(bytes, 'all_saves.zip');
+      _showToast('Export Complete');
     } catch (e) {
-      web.window.alert('Error exporting all: $e');
+      _showModal('Export Error', 'Error exporting all: $e');
+    } finally {
+      textSpan.textContent = originalText;
+      btn.disabled = false;
     }
   }
 
   void _setupEventListeners() {
+    _alertClose.addEventListener('click', (web.MouseEvent e) {
+      _alertOverlay.style.display = 'none';
+    }.toJS);
+
     // Dropzone events
     _dropzone.addEventListener('dragover', (web.DragEvent e) {
       e.preventDefault();
@@ -99,7 +193,7 @@ class WebXbmutApp {
     }.toJS;
 
     // Header buttons
-    web.document.querySelector('.btn-primary')?.addEventListener('click', (web.MouseEvent e) {
+    web.document.querySelector('#export-card-btn')?.addEventListener('click', (web.MouseEvent e) {
       _exportCard();
     }.toJS);
 
@@ -115,7 +209,7 @@ class WebXbmutApp {
       e.stopPropagation();
     }.toJS);
 
-    _helpOverlay.querySelector('.btn')?.addEventListener('click', (web.MouseEvent e) {
+    web.document.querySelector('#help-dismiss-btn')?.addEventListener('click', (web.MouseEvent e) {
       _toggleHelp(false);
     }.toJS);
 
@@ -124,15 +218,15 @@ class WebXbmutApp {
     }.toJS);
 
     // Detail view buttons
-    _detailView.querySelector('.btn-danger')?.addEventListener('click', (web.MouseEvent e) {
+    web.document.querySelector('#delete-save-btn')?.addEventListener('click', (web.MouseEvent e) {
       _deleteSelected();
     }.toJS);
 
-    _detailView.querySelector('.btn:not(.btn-danger)')?.addEventListener('click', (web.MouseEvent e) {
+    web.document.querySelector('#export-save-btn')?.addEventListener('click', (web.MouseEvent e) {
       _exportSelected();
     }.toJS);
 
-    _detailView.querySelectorAll('.btn').item(2)?.addEventListener('click', (web.MouseEvent e) {
+    web.document.querySelector('#cancel-detail-btn')?.addEventListener('click', (web.MouseEvent e) {
       _showWelcome();
     }.toJS);
 
@@ -154,6 +248,7 @@ class WebXbmutApp {
 
   void _addCreateNewButton() {
     final btn = web.document.createElement('button') as web.HTMLButtonElement;
+    btn.id = 'create-new-btn';
     btn.className = 'btn btn-subtle';
     btn.style.marginTop = '10px';
     btn.textContent = 'Create New Memory Unit';
@@ -177,7 +272,7 @@ class WebXbmutApp {
     
     if (file.name.toLowerCase().endsWith('.zip')) {
       if (_mu == null) {
-        web.window.alert('Please load a Memory Unit (.bin) first before importing a .zip save.');
+        _showModal('Error', 'Please load a Memory Unit (.bin) first before importing a .zip save.');
         return;
       }
       _importZip(bytes);
@@ -201,18 +296,20 @@ class WebXbmutApp {
       _mu = XboxMemoryUnit.fromBytes(bytes);
       _fileName = name;
       _updateUI();
+      _showToast('Memory Unit Loaded');
     } catch (e) {
-      web.window.alert('Error loading Memory Unit: $e');
+      _showModal('Load Error', 'Error loading Memory Unit: $e');
     }
   }
 
   void _createNewMU() {
     try {
       _mu = XboxMemoryUnit.format();
-      _fileName = 'new_card.bin';
+      _fileName = 'new_card.img';
       _updateUI();
+      _showToast('New Memory Unit Created');
     } catch (e) {
-      web.window.alert('Error creating Memory Unit: $e');
+      _showModal('Creation Error', 'Error creating Memory Unit: $e');
     }
   }
 
@@ -221,8 +318,9 @@ class WebXbmutApp {
     try {
       _mu!.importZip(zipBytes);
       _updateUI();
+      _showToast('ZIP Imported Successfully');
     } catch (e) {
-      web.window.alert('Error importing ZIP: $e');
+      _showModal('Import Error', 'Error importing ZIP: $e');
     }
   }
 
@@ -230,12 +328,9 @@ class WebXbmutApp {
     if (_mu == null) return;
 
     // Update Header
-    final infoSpans = _muInfo.querySelectorAll('span');
-    if (infoSpans.length >= 3) {
-      (infoSpans.item(0) as web.HTMLElement).innerHTML = '<strong>Device:</strong> $_fileName'.toJS;
-      (infoSpans.item(1) as web.HTMLElement).innerHTML = '<strong>Capacity:</strong> ${(_mu!.totalBytes / 1024 / 1024).toStringAsFixed(1)} MB'.toJS;
-      (infoSpans.item(2) as web.HTMLElement).innerHTML = '<strong>Used:</strong> ${((_mu!.totalBytes - _mu!.freeBytes) / 1024 / 1024).toStringAsFixed(1)} MB'.toJS;
-    }
+    _infoDevice.innerHTML = '<strong>Device:</strong> $_fileName'.toJS;
+    _infoCapacity.innerHTML = '<strong>Capacity:</strong> ${(_mu!.totalBytes / 1024 / 1024).toStringAsFixed(1)} MB'.toJS;
+    _infoUsed.innerHTML = '<strong>Used:</strong> ${((_mu!.totalBytes - _mu!.freeBytes) / 1024 / 1024).toStringAsFixed(1)} MB'.toJS;
 
     _renderTree();
     _showWelcome();
@@ -256,7 +351,14 @@ class WebXbmutApp {
       summaryContent.style.display = 'flex';
       summaryContent.style.alignItems = 'center';
       summaryContent.style.gap = '10px';
-      summaryContent.innerHTML = '<img src="icons/folder.svg" class="xbox-icon" alt="Folder"> ${title.name}'.toJS;
+
+      String iconsHtml = '<img src="icons/folder.svg" class="xbox-icon" alt="Folder">';
+      if (title.titleImageBmp != null && title.titleImageBmp!.isNotEmpty) {
+        final base64 = base64Encode(title.titleImageBmp!);
+        iconsHtml += '<img src="data:image/bmp;base64,$base64" class="xbox-icon" style="border-radius:2px; filter:none;" alt="Game Icon">';
+      }
+      
+      summaryContent.innerHTML = '$iconsHtml ${title.name}'.toJS;
       
       final deleteTitleBtn = web.document.createElement('img') as web.HTMLImageElement;
       deleteTitleBtn.src = 'icons/delete.svg';
@@ -311,12 +413,12 @@ class WebXbmutApp {
     _viewDate.textContent = _formatDate(save.modifiedAt);
 
     // Set icon if available
-    if (save.saveImage != null && save.saveImage!.isNotEmpty) {
-      final base64Image = base64Encode(save.saveImage!);
-      _viewIcon.src = 'data:image/png;base64,$base64Image';
-    } else if (title.titleImage != null && title.titleImage!.isNotEmpty) {
-      final base64Image = base64Encode(title.titleImage!);
-      _viewIcon.src = 'data:image/png;base64,$base64Image';
+    if (save.saveImageBmp != null && save.saveImageBmp!.isNotEmpty) {
+      final base64Image = base64Encode(save.saveImageBmp!);
+      _viewIcon.src = 'data:image/bmp;base64,$base64Image';
+    } else if (title.titleImageBmp != null && title.titleImageBmp!.isNotEmpty) {
+      final base64Image = base64Encode(title.titleImageBmp!);
+      _viewIcon.src = 'data:image/bmp;base64,$base64Image';
     } else {
       _viewIcon.src = 'https://via.placeholder.com/128x128/1a1a1a/107c10?text=SAVE';
     }
@@ -327,15 +429,16 @@ class WebXbmutApp {
     _detailView.classList.add('fade-in');
   }
 
-  void _deleteTitle(String titleName) {
+  Future<void> _deleteTitle(String titleName) async {
     if (_mu == null) return;
-    if (web.window.confirm('Are you sure you want to delete ALL saves for "$titleName"?')) {
+    if (await _showConfirm('Delete Game Folder', 'Are you sure you want to delete ALL saves for "$titleName"?')) {
       try {
         _mu!.delete(titleName);
         _updateUI();
         _showWelcome();
+        _showToast('Game Folder Deleted');
       } catch (e) {
-        web.window.alert('Error deleting title: $e');
+        _showModal('Delete Error', 'Error deleting title: $e');
       }
     }
   }
@@ -345,16 +448,17 @@ class WebXbmutApp {
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 
-  void _deleteSelected() {
+  Future<void> _deleteSelected() async {
     if (_mu == null) return;
     final path = '${_viewGame.textContent}/${_viewSave.textContent}';
-    if (web.window.confirm('Are you sure you want to delete "$path"?')) {
+    if (await _showConfirm('Delete Save', 'Are you sure you want to delete "$path"?')) {
       try {
         _mu!.delete(path);
         _updateUI();
         _showWelcome();
+        _showToast('Save Deleted');
       } catch (e) {
-        web.window.alert('Error deleting: $e');
+        _showModal('Delete Error', 'Error deleting: $e');
       }
     }
   }
@@ -365,17 +469,19 @@ class WebXbmutApp {
     try {
       final bytes = _mu!.export(path);
       _downloadFile(bytes, '${_viewSave.textContent}.zip');
+      _showToast('Save Exported');
     } catch (e) {
-      web.window.alert('Error exporting save: $e');
+      _showModal('Export Error', 'Error exporting save: $e');
     }
   }
 
   void _exportCard() {
     if (_mu == null) return;
     try {
-      _downloadFile(_mu!.bytes, _fileName ?? 'card.bin');
+      _downloadFile(_mu!.bytes, _fileName ?? 'card.img');
+      _showToast('Card Image Exported');
     } catch (e) {
-      web.window.alert('Error exporting card: $e');
+      _showModal('Export Error', 'Error exporting card: $e');
     }
   }
 

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <defs>
+        <!-- Standard Xbox Green Gradient -->
+        <linearGradient id="zipGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#25f20f;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#107c10;stop-opacity:1" />
+        </linearGradient>
+
+        <!-- Glow for the text -->
+        <filter id="zipTextGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="0.4" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+    </defs>
+
+    <!-- Folder Base -->
+    <path fill="url(#zipGrad)" stroke="#050505" stroke-width="0.5" d="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z" />
+    
+    <!-- "ZIP" Text on Folder Body -->
+    <text x="4" y="16" font-family="Arial Black, sans-serif" font-weight="900" font-size="5" fill="#050505" opacity="0.8" filter="url(#zipTextGlow)" letter-spacing="-0.2">ZIP</text>
+    <text x="4.2" y="15.8" font-family="Arial Black, sans-serif" font-weight="900" font-size="5" fill="#ffffff" opacity="0.3" letter-spacing="-0.2">ZIP</text>
+
+    <!-- Detailed Zipper Graphic -->
+    <g transform="translate(15.5, 7.5)">
+        <!-- Zipper teeth/line -->
+        <rect x="0" y="0" width="2" height="10" rx="0.5" fill="rgba(0,0,0,0.5)" stroke="#050505" stroke-width="0.2" />
+        
+        <!-- Individual Teeth (Visual abstraction) -->
+        <line x1="0.2" y1="1" x2="1.8" y2="1" stroke="#050505" stroke-width="0.3" opacity="0.4" />
+        <line x1="0.2" y1="2.5" x2="1.8" y2="2.5" stroke="#050505" stroke-width="0.3" opacity="0.4" />
+        <line x1="0.2" y1="4" x2="1.8" y2="4" stroke="#050505" stroke-width="0.3" opacity="0.4" />
+        <line x1="0.2" y1="5.5" x2="1.8" y2="5.5" stroke="#050505" stroke-width="0.3" opacity="0.4" />
+        <line x1="0.2" y1="7" x2="1.8" y2="7" stroke="#050505" stroke-width="0.3" opacity="0.4" />
+        <line x1="0.2" y1="8.5" x2="1.8" y2="8.5" stroke="#050505" stroke-width="0.3" opacity="0.4" />
+
+        <!-- Zipper slider/pull -->
+        <g transform="translate(0, 3.5)">
+            <!-- Slider body -->
+            <rect x="-1" y="0" width="4" height="3" rx="0.8" fill="#050505" />
+            <rect x="-0.8" y="0.2" width="3.6" height="2.6" rx="0.6" fill="#1a1a1a" />
+            
+            <!-- Pull tab -->
+            <path d="M 0.5 2.5 L 1.5 2.5 L 2 5.5 L 0 5.5 Z" fill="#050505" />
+            <circle cx="1" cy="4.5" r="0.4" fill="url(#zipGrad)" opacity="0.8" />
+        </g>
+    </g>
+</svg>
