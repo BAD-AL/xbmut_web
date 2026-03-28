@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:js_interop';
 import 'dart:typed_data';
 import 'package:web/web.dart' as web;
@@ -47,6 +48,27 @@ class WebXbmutApp {
 
     _setupEventListeners();
     _addCreateNewButton();
+    _setupExportAll();
+  }
+
+  void _setupExportAll() {
+    web.document.querySelector('#export-all-btn')?.addEventListener('click', (web.MouseEvent e) {
+      _exportAll();
+    }.toJS);
+  }
+
+  void _exportAll() {
+    if (_mu == null) {
+      web.window.alert('No Memory Unit loaded.');
+      return;
+    }
+    try {
+      //final bytes = _mu!.export('all');
+      final bytes = _mu!.exportAll();
+      _downloadFile(bytes, 'all_saves.zip');
+    } catch (e) {
+      web.window.alert('Error exporting all: $e');
+    }
   }
 
   void _setupEventListeners() {
@@ -136,6 +158,7 @@ class WebXbmutApp {
     btn.style.marginTop = '10px';
     btn.textContent = 'Create New Memory Unit';
     btn.onclick = (web.Event e) {
+      e.stopPropagation();
       _createNewMU();
     }.toJS;
     _dropzone.appendChild(btn);
@@ -227,7 +250,27 @@ class WebXbmutApp {
       details.className = 'tree-item';
       
       final summary = web.document.createElement('summary') as web.HTMLElement;
-      summary.innerHTML = '<img src="icons/folder.svg" class="xbox-icon" alt="Folder"> ${title.name}'.toJS;
+      summary.style.justifyContent = 'space-between';
+      
+      final summaryContent = web.document.createElement('div') as web.HTMLDivElement;
+      summaryContent.style.display = 'flex';
+      summaryContent.style.alignItems = 'center';
+      summaryContent.style.gap = '10px';
+      summaryContent.innerHTML = '<img src="icons/folder.svg" class="xbox-icon" alt="Folder"> ${title.name}'.toJS;
+      
+      final deleteTitleBtn = web.document.createElement('img') as web.HTMLImageElement;
+      deleteTitleBtn.src = 'icons/delete.svg';
+      deleteTitleBtn.className = 'xbox-icon';
+      deleteTitleBtn.style.cursor = 'pointer';
+      deleteTitleBtn.title = 'Delete Entire Game Folder';
+      deleteTitleBtn.onclick = (web.Event e) {
+        e.stopPropagation();
+        e.preventDefault();
+        _deleteTitle(title.name);
+      }.toJS;
+
+      summary.appendChild(summaryContent);
+      summary.appendChild(deleteTitleBtn);
       details.appendChild(summary);
 
       final saveList = web.document.createElement('div') as web.HTMLDivElement;
@@ -267,13 +310,34 @@ class WebXbmutApp {
     _viewSize.textContent = '${(save.size / 1024).toStringAsFixed(0)} KB';
     _viewDate.textContent = _formatDate(save.modifiedAt);
 
-    // Set icon if available (placeholder for now as library might not extract icons to web easily yet)
-    _viewIcon.src = 'https://via.placeholder.com/128x128/1a1a1a/107c10?text=SAVE';
+    // Set icon if available
+    if (save.saveImage != null && save.saveImage!.isNotEmpty) {
+      final base64Image = base64Encode(save.saveImage!);
+      _viewIcon.src = 'data:image/png;base64,$base64Image';
+    } else if (title.titleImage != null && title.titleImage!.isNotEmpty) {
+      final base64Image = base64Encode(title.titleImage!);
+      _viewIcon.src = 'data:image/png;base64,$base64Image';
+    } else {
+      _viewIcon.src = 'https://via.placeholder.com/128x128/1a1a1a/107c10?text=SAVE';
+    }
 
     _detailView.classList.remove('fade-in');
     // Trigger reflow
     _detailView.offsetWidth;
     _detailView.classList.add('fade-in');
+  }
+
+  void _deleteTitle(String titleName) {
+    if (_mu == null) return;
+    if (web.window.confirm('Are you sure you want to delete ALL saves for "$titleName"?')) {
+      try {
+        _mu!.delete(titleName);
+        _updateUI();
+        _showWelcome();
+      } catch (e) {
+        web.window.alert('Error deleting title: $e');
+      }
+    }
   }
 
   String _formatDate(DateTime date) {

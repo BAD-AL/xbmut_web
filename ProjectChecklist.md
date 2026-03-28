@@ -26,3 +26,10 @@
 ## Phase 4: Verification and Documentation
 - [x] Verify all use cases from `Instructions.md` <!-- status: complete -->
 - [x] Update documentation <!-- status: complete -->
+
+## Phase 5: Final Bug Fixes and Enhancements
+- [x] Fix "Create New Memory Unit" button bubbling <!-- status: complete -->
+- [x] Implement Game Folder Deletion <!-- status: complete -->
+- [x] Implement "Export All to .zip" functionality <!-- status: complete -->
+- [x] Replace placeholder icons with actual save/title images <!-- status: complete -->
+- [x] Fix git dependency warning in pubspec.yaml <!-- status: complete -->
