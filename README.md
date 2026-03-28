@@ -38,7 +38,7 @@ This project is a single-page, web application built with Dart that provides a u
     ```
 3.  Build the web application:
     ```bash
-    dart run build_runner build --delete-conflicting-outputs
+    webdev build
     ```
     This command will compile the Dart code into JavaScript, generating the necessary files in the `web/` directory (specifically `main.dart.js`).
 
@@ -46,15 +46,11 @@ This project is a single-page, web application built with Dart that provides a u
 
 After building, you can serve the `web/` directory using any static file server. For example, using `web_http_server`.
 
-1.  Install a simple HTTP server globally (if you haven't already):
+1.  Build and serve 
     ```bash
-    dart pub global activate web_http_server
+    webdev serve 
     ```
-2.  Serve the `web/` directory:
-    ```bash
-    web_http_server --port 8080 web/
-    ```
-3.  Open your browser and navigate to `http://localhost:8080`.
+2.  Open your browser and navigate to `http://localhost:8080`.
 
 ## Dependencies
 
