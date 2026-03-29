@@ -83,6 +83,153 @@ class WebXbmutApp {
     _setupEventListeners();
     _addCreateNewButton();
     _setupExportAll();
+    _startGamepadPolling();
+  }
+
+  void _startGamepadPolling() {
+    // Poll gamepads at 60fps
+    web.window.requestAnimationFrame((JSNumber time) {
+      _pollGamepad();
+      _startGamepadPolling();
+    }.toJS);
+  }
+
+  bool _buttonPressed = false;
+  DateTime _lastGamepadUpdateTime = DateTime.fromMillisecondsSinceEpoch(0);
+
+  void _pollGamepad() {
+    final now = DateTime.now();
+    if (now.difference(_lastGamepadUpdateTime).inMilliseconds < 150) return;
+
+    final gamepads = web.window.navigator.getGamepads();
+    if (gamepads.length == 0) return;
+    
+    final gp = gamepads[0];
+    if (gp == null) return;
+
+    // Xbox Controller Mapping (Standard)
+    // Buttons -> 0: A, 1: B, 12: Up, 13: Down, 14: Left, 15: Right
+    // Axes -> 0: Left Stick X (-1 to 1), 1: Left Stick Y (-1 to 1)
+    
+    bool moved = false;
+
+    // A Button (Select)
+    if (gp.buttons[0].pressed) {
+      final active = web.document.activeElement as web.HTMLElement?;
+      active?.click();
+      _lastGamepadUpdateTime = now;
+      return;
+    }
+    
+    // B Button (Back)
+    if (gp.buttons[1].pressed) {
+      _goBack();
+      _lastGamepadUpdateTime = now;
+      return;
+    }
+
+    // Navigation (D-Pad or Left Stick)
+    final axisX = gp.axes[0] as double;
+    final axisY = gp.axes[1] as double;
+
+    if (gp.buttons[13].pressed || axisY > 0.5) {
+      _moveFocus(1);
+      moved = true;
+    } else if (gp.buttons[12].pressed || axisY < -0.5) {
+      _moveFocus(-1);
+      moved = true;
+    } else if (gp.buttons[15].pressed || axisX > 0.5) {
+      _handleHorizontalNav(true); // Expand
+      moved = true;
+    } else if (gp.buttons[14].pressed || axisX < -0.5) {
+      _handleHorizontalNav(false); // Collapse
+      moved = true;
+    }
+
+    if (moved) {
+      _lastGamepadUpdateTime = now;
+    }
+  }
+
+  void _handleHorizontalNav(bool expand) {
+    final active = web.document.activeElement;
+    if (active == null) return;
+
+    // If we are on a summary, toggle the parent details
+    if (active.tagName.toLowerCase() == 'summary') {
+      final details = active.parentElement as web.HTMLDetailsElement?;
+      if (details != null) {
+        details.open = expand;
+      }
+    } 
+    // If we are on a save item, collapse its parent details
+    else if (active.className.contains('save-item') && !expand) {
+      final details = active.closest('details') as web.HTMLDetailsElement?;
+      if (details != null) {
+        details.open = false;
+        (details.querySelector('summary') as web.HTMLElement?)?.focus();
+      }
+    }
+  }
+
+  void _goBack() {
+    if (_confirmOverlay.style.display == 'flex') {
+      _confirmNo.click();
+    } else if (_alertOverlay.style.display == 'flex') {
+      _alertClose.click();
+    } else if (_helpOverlay.style.display == 'flex') {
+      _toggleHelp(false);
+    } else if (_detailView.style.display == 'block') {
+      _showWelcome();
+    }
+  }
+
+  void _moveFocus(int direction) {
+    web.HTMLElement? activeOverlay;
+    if (_confirmOverlay.style.display == 'flex') activeOverlay = _confirmOverlay;
+    else if (_alertOverlay.style.display == 'flex') activeOverlay = _alertOverlay;
+    else if (_helpOverlay.style.display == 'flex') activeOverlay = _helpOverlay;
+
+    final container = activeOverlay ?? web.document.body as web.HTMLElement;
+    final focusable = container.querySelectorAll('button, [tabindex="0"], a[href], input:not([type="hidden"]), summary');
+    final list = <web.HTMLElement>[];
+    
+    for (var i = 0; i < focusable.length; i++) {
+      final el = focusable.item(i) as web.HTMLElement;
+      
+      // Check if element is visible and has layout
+      if (el.offsetParent != null && el.getClientRects().length > 0) {
+        // Also ensure it's not inside a closed <details> element
+        bool hiddenByDetails = false;
+        web.Element? parent = el.parentElement;
+        while (parent != null && parent != container) {
+          if (parent.tagName.toLowerCase() == 'details') {
+            if (!(parent as web.HTMLDetailsElement).open) {
+              if (el.tagName.toLowerCase() != 'summary') {
+                hiddenByDetails = true;
+                break;
+              }
+            }
+          }
+          parent = parent.parentElement;
+        }
+        
+        if (!hiddenByDetails) {
+          list.add(el);
+        }
+      }
+    }
+
+    if (list.isEmpty) return;
+
+    final current = web.document.activeElement as web.HTMLElement?;
+    int index = current != null ? list.indexOf(current) : -1;
+    
+    index += direction;
+    if (index < 0) index = list.length - 1;
+    if (index >= list.length) index = 0;
+    
+    list[index].focus();
   }
 
   void _setupExportAll() {
@@ -95,6 +242,7 @@ class WebXbmutApp {
     _alertTitle.textContent = title;
     _alertMessage.textContent = message;
     _alertOverlay.style.display = 'flex';
+    _alertClose.focus();
   }
 
   Future<bool> _showConfirm(String title, String message) {
@@ -102,6 +250,7 @@ class WebXbmutApp {
     _confirmTitle.textContent = title;
     _confirmMessage.textContent = message;
     _confirmOverlay.style.display = 'flex';
+    _confirmNo.focus();
 
     late web.EventListener yesListener;
     late web.EventListener noListener;
@@ -201,6 +350,13 @@ class WebXbmutApp {
       _toggleHelp(true);
     }.toJS);
 
+    web.document.querySelector('.help-icon-btn')?.addEventListener('keydown', (web.KeyboardEvent e) {
+      if (e.key == 'Enter' || e.key == ' ') {
+        e.preventDefault();
+        _toggleHelp(true);
+      }
+    }.toJS);
+
     _helpOverlay.addEventListener('click', (web.MouseEvent e) {
       _toggleHelp(false);
     }.toJS);
@@ -215,6 +371,13 @@ class WebXbmutApp {
 
     _dropzone.addEventListener('click', (web.MouseEvent e) {
       _fileInput.click();
+    }.toJS);
+
+    _dropzone.addEventListener('keydown', (web.KeyboardEvent e) {
+      if (e.key == 'Enter' || e.key == ' ') {
+        e.preventDefault();
+        _fileInput.click();
+      }
     }.toJS);
 
     // Detail view buttons
@@ -242,6 +405,19 @@ class WebXbmutApp {
         if (dt != null && dt.files.length > 0) {
           _handleImport(dt.files.item(0)!);
         }
+      }
+    }.toJS);
+
+    // Global keyboard navigation
+    web.window.addEventListener('keydown', (web.KeyboardEvent e) {
+      if (e.key == 'Escape') {
+        _goBack();
+      } else if (e.key == 'ArrowDown') {
+        e.preventDefault();
+        _moveFocus(1);
+      } else if (e.key == 'ArrowUp') {
+        e.preventDefault();
+        _moveFocus(-1);
       }
     }.toJS);
   }
@@ -346,6 +522,7 @@ class WebXbmutApp {
       
       final summary = web.document.createElement('summary') as web.HTMLElement;
       summary.style.justifyContent = 'space-between';
+      summary.tabIndex = 0; // Ensure it's in our focus list
       
       final summaryContent = web.document.createElement('div') as web.HTMLDivElement;
       summaryContent.style.display = 'flex';
@@ -365,10 +542,23 @@ class WebXbmutApp {
       deleteTitleBtn.className = 'xbox-icon';
       deleteTitleBtn.style.cursor = 'pointer';
       deleteTitleBtn.title = 'Delete Entire Game Folder';
-      deleteTitleBtn.onclick = (web.Event e) {
+      deleteTitleBtn.tabIndex = 0;
+      deleteTitleBtn.setAttribute('role', 'button');
+      deleteTitleBtn.setAttribute('aria-label', 'Delete Entire Game Folder');
+      deleteTitleBtn.style.borderRadius = '4px'; // Better focus ring shape
+      deleteTitleBtn.style.padding = '2px';
+
+      final deleteAction = (web.Event e) {
         e.stopPropagation();
         e.preventDefault();
         _deleteTitle(title.name);
+      };
+
+      deleteTitleBtn.onclick = deleteAction.toJS;
+      deleteTitleBtn.onkeydown = (web.KeyboardEvent e) {
+        if (e.key == 'Enter' || e.key == ' ') {
+          deleteAction(e);
+        }
       }.toJS;
 
       summary.appendChild(summaryContent);
@@ -382,9 +572,21 @@ class WebXbmutApp {
         final saveItem = web.document.createElement('div') as web.HTMLDivElement;
         saveItem.className = 'save-item';
         saveItem.textContent = save.name;
-        saveItem.onclick = (web.Event e) {
+        saveItem.tabIndex = 0;
+        saveItem.setAttribute('role', 'button');
+        
+        final showAction = (web.Event e) {
           _showDetail(title.name, save.name);
+        };
+        
+        saveItem.onclick = showAction.toJS;
+        saveItem.onkeydown = (web.KeyboardEvent e) {
+          if (e.key == 'Enter' || e.key == ' ') {
+            e.preventDefault();
+            _showDetail(title.name, save.name);
+          }
         }.toJS;
+        
         saveList.appendChild(saveItem);
       }
       
