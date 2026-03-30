@@ -10,8 +10,28 @@ void main() {
 }
 
 class WebXbmutApp {
-  XboxMemoryUnit? _mu;
-  String? _fileName;
+  final List<XboxMemoryUnit?> _mus = [null, null];
+  final List<String?> _fileNames = [null, null];
+  int _activeSlot = 0;
+
+  XboxMemoryUnit? get _mu => _mus[_activeSlot];
+  String? get _fileName => _fileNames[_activeSlot];
+
+  void _switchSlot(int slot) {
+    if (_activeSlot == slot) return;
+    _activeSlot = slot;
+    _slotABtn.classList.toggle('active', _activeSlot == 0);
+    _slotBBtn.classList.toggle('active', _activeSlot == 1);
+    _updateUI();
+  }
+
+  String _getSlotStats(int slot) {
+    final mu = _mus[slot];
+    if (mu == null) return '';
+    final total = mu.totalBytes / 1024 / 1024;
+    final used = (mu.totalBytes - mu.freeBytes) / 1024 / 1024;
+    return 'Used ${used.toStringAsFixed(1)}MB/${total.toStringAsFixed(0)}MB';
+  }
 
   // --- UI Elements ---
   late final web.HTMLDivElement _welcomeView;
@@ -21,6 +41,14 @@ class WebXbmutApp {
   late final web.HTMLInputElement _fileInput;
   late final web.HTMLDivElement _dropzone;
   late final web.HTMLButtonElement _otherLinksBtn;
+
+  // Slot Tabs
+  late final web.HTMLButtonElement _slotABtn;
+  late final web.HTMLButtonElement _slotBBtn;
+  late final web.HTMLElement _slotAName;
+  late final web.HTMLElement _slotBName;
+  late final web.HTMLElement _slotAStats;
+  late final web.HTMLElement _slotBStats;
 
   // Alert/Toast elements
   late final web.HTMLDivElement _alertOverlay;
@@ -60,6 +88,13 @@ class WebXbmutApp {
     _fileInput = web.document.querySelector('#file-input') as web.HTMLInputElement;
     _dropzone = web.document.querySelector('.dropzone') as web.HTMLDivElement;
     _otherLinksBtn = web.document.querySelector('#other-links-btn') as web.HTMLButtonElement;
+
+    _slotABtn = web.document.querySelector('#slot-a-btn') as web.HTMLButtonElement;
+    _slotBBtn = web.document.querySelector('#slot-b-btn') as web.HTMLButtonElement;
+    _slotAName = web.document.querySelector('#slot-a-name') as web.HTMLElement;
+    _slotBName = web.document.querySelector('#slot-b-name') as web.HTMLElement;
+    _slotAStats = web.document.querySelector('#slot-a-stats') as web.HTMLElement;
+    _slotBStats = web.document.querySelector('#slot-b-stats') as web.HTMLElement;
 
     _alertOverlay = web.document.querySelector('#alert-overlay') as web.HTMLDivElement;
     _alertTitle = web.document.querySelector('#alert-title') as web.HTMLElement;
@@ -264,7 +299,10 @@ class WebXbmutApp {
   }
 
   Future<void> _handleExportMenu() async {
-    final result = await _showSelection<String>('Export Options', [
+    final otherSlot = _activeSlot == 0 ? 1 : 0;
+    final otherName = _activeSlot == 0 ? "Slot B" : "Slot A";
+    
+    final options = [
       SelectionOption(
         label: 'Export Card Image (.bin)',
         value: 'card',
@@ -275,12 +313,42 @@ class WebXbmutApp {
         value: 'zip',
         iconPath: 'icons/zip.svg',
       ),
-    ]);
+    ];
+
+    if (_mus[otherSlot] != null) {
+      options.add(SelectionOption(
+        label: 'Transfer All to $otherName',
+        value: 'transfer',
+        iconPath: 'icons/inbox.svg',
+      ));
+    }
+
+    final result = await _showSelection<String>('Export Options', options);
 
     if (result == 'card') {
       _exportCard();
     } else if (result == 'zip') {
       _exportAll();
+    } else if (result == 'transfer') {
+      _transferAll();
+    }
+  }
+
+  Future<void> _transferAll() async {
+    final targetSlot = _activeSlot == 0 ? 1 : 0;
+    final targetMU = _mus[targetSlot];
+    if (_mu == null || targetMU == null) return;
+
+    if (await _showConfirm('Transfer All', 'Copy all saves from current card to ${targetSlot == 0 ? "Slot A" : "Slot B"}? Existing saves may be overwritten.')) {
+      _showToast('Transferring...');
+      try {
+        final zip = _mu!.exportAll();
+        targetMU.importZip(zip);
+        _updateUI();
+        _showToast('Transfer Complete');
+      } catch (e) {
+        _showModal('Transfer Error', 'Error during transfer: $e');
+      }
     }
   }
 
@@ -458,6 +526,38 @@ class WebXbmutApp {
        ]);
     }.toJS);
 
+    _slotABtn.addEventListener('click', (web.MouseEvent e) {
+      _switchSlot(0);
+    }.toJS);
+
+    _slotBBtn.addEventListener('click', (web.MouseEvent e) {
+      _switchSlot(1);
+    }.toJS);
+
+    // Slot Tab Drag-and-Drop
+    for (int i = 0; i < 2; i++) {
+      final btn = i == 0 ? _slotABtn : _slotBBtn;
+      btn.addEventListener('dragover', (web.DragEvent e) {
+        e.preventDefault();
+        btn.classList.add('active');
+      }.toJS);
+
+      btn.addEventListener('dragleave', (web.DragEvent e) {
+        if (_activeSlot != i) {
+          btn.classList.remove('active');
+        }
+      }.toJS);
+
+      btn.addEventListener('drop', (web.DragEvent e) {
+        e.preventDefault();
+        if (_activeSlot != i) btn.classList.remove('active');
+        final dt = e.dataTransfer;
+        if (dt != null && dt.files.length > 0) {
+          _handleImportToSlot(dt.files.item(0)!, i);
+        }
+      }.toJS);
+    }
+
     web.document.querySelector('.help-icon-btn')?.addEventListener('click', (web.MouseEvent e) {
       _toggleHelp(true);
     }.toJS);
@@ -551,6 +651,45 @@ class WebXbmutApp {
     _helpOverlay.style.display = show ? 'flex' : 'none';
   }
 
+  Future<void> _handleImportToSlot(web.File file, int slot) async {
+     final name = file.name.toLowerCase();
+     if (!name.endsWith('.zip') && !name.endsWith('.bin') && !name.endsWith('.img')) return;
+     
+     final reader = web.FileReader();
+     reader.readAsArrayBuffer(file);
+     await reader.onLoadEnd.first;
+     final bytes = (reader.result as JSArrayBuffer).toDart.asUint8List();
+     
+     if (name.endsWith('.zip')) {
+       _importZipToSlot(bytes, slot);
+     } else {
+       _loadMUToSlot(bytes, file.name, slot);
+     }
+  }
+
+  void _loadMUToSlot(Uint8List bytes, String name, int slot) {
+    try {
+      _mus[slot] = XboxMemoryUnit.fromBytes(bytes);
+      _fileNames[slot] = name;
+      _updateUI();
+      _showToast('Memory Unit Loaded in Slot ${slot == 0 ? "A" : "B"}');
+    } catch (e) {
+      _showModal('Load Error', 'Error loading Memory Unit: $e');
+    }
+  }
+
+  void _importZipToSlot(Uint8List zipBytes, int slot) {
+    final mu = _mus[slot];
+    if (mu == null) return;
+    try {
+      mu.importZip(zipBytes);
+      _updateUI();
+      _showToast('ZIP Imported into Slot ${slot == 0 ? "A" : "B"}');
+    } catch (e) {
+      _showModal('Import Error', 'Error importing ZIP: $e');
+    }
+  }
+
   Future<void> _handleFile(web.File file) async {
     final reader = web.FileReader();
     reader.readAsArrayBuffer(file);
@@ -581,10 +720,10 @@ class WebXbmutApp {
 
   void _loadMU(Uint8List bytes, String name) {
     try {
-      _mu = XboxMemoryUnit.fromBytes(bytes);
-      _fileName = name;
+      _mus[_activeSlot] = XboxMemoryUnit.fromBytes(bytes);
+      _fileNames[_activeSlot] = name;
       _updateUI();
-      _showToast('Memory Unit Loaded');
+      _showToast('Memory Unit Loaded in Slot ${_activeSlot == 0 ? "A" : "B"}');
     } catch (e) {
       _showModal('Load Error', 'Error loading Memory Unit: $e');
     }
@@ -592,10 +731,10 @@ class WebXbmutApp {
 
   void _createNewMU() {
     try {
-      _mu = XboxMemoryUnit.format();
-      _fileName = 'new_card.img';
+      _mus[_activeSlot] = XboxMemoryUnit.format();
+      _fileNames[_activeSlot] = 'new_card.img';
       _updateUI();
-      _showToast('New Memory Unit Created');
+      _showToast('New Memory Unit Created in Slot ${_activeSlot == 0 ? "A" : "B"}');
     } catch (e) {
       _showModal('Creation Error', 'Error creating Memory Unit: $e');
     }
@@ -613,7 +752,19 @@ class WebXbmutApp {
   }
 
   void _updateUI() {
-    if (_mu == null) return;
+    _slotAName.textContent = _fileNames[0] ?? 'Empty';
+    _slotBName.textContent = _fileNames[1] ?? 'Empty';
+    _slotAStats.textContent = _getSlotStats(0);
+    _slotBStats.textContent = _getSlotStats(1);
+
+    if (_mu == null) {
+      _infoDevice.innerHTML = '<strong>Device:</strong> none'.toJS;
+      _infoCapacity.innerHTML = '<strong>Capacity:</strong> 0.0 MB'.toJS;
+      _infoUsed.innerHTML = '<strong>Used:</strong> 0.0 MB'.toJS;
+      _treeContainer.innerHTML = ''.toJS;
+      _showWelcome();
+      return;
+    }
 
     // Update Header
     _infoDevice.innerHTML = '<strong>Device:</strong> $_fileName'.toJS;
@@ -777,15 +928,48 @@ class WebXbmutApp {
     }
   }
 
-  void _exportSelected() {
+  void _exportSelected() async {
     if (_mu == null) return;
     final path = '${_viewGame.textContent}/${_viewSave.textContent}';
+    final otherSlot = _activeSlot == 0 ? 1 : 0;
+    final otherName = _activeSlot == 0 ? "Slot B" : "Slot A";
+
+    final options = [
+      SelectionOption(label: 'Export Save (.zip)', value: 'zip', iconPath: 'icons/zip.svg'),
+    ];
+
+    if (_mus[otherSlot] != null) {
+      options.add(SelectionOption(label: 'Transfer to $otherName', value: 'transfer', iconPath: 'icons/inbox.svg'));
+    }
+
+    final result = await _showSelection<String>('Save Options', options);
+    
+    if (result == 'zip') {
+      try {
+        final bytes = _mu!.export(path);
+        _showToast('Exporting...');
+        _downloadFile(bytes, '${_viewSave.textContent}.zip');
+      } catch (e) {
+        _showModal('Export Error', 'Error exporting save: $e');
+      }
+    } else if (result == 'transfer') {
+      _transferSelected(path);
+    }
+  }
+
+  void _transferSelected(String path) {
+    final targetSlot = _activeSlot == 0 ? 1 : 0;
+    final targetMU = _mus[targetSlot];
+    if (_mu == null || targetMU == null) return;
+
+    _showToast('Transferring...');
     try {
       final bytes = _mu!.export(path);
-      _showToast('Exporting...');
-      _downloadFile(bytes, '${_viewSave.textContent}.zip');
+      targetMU.importZip(bytes);
+      _updateUI();
+      _showToast('Transfer to ${targetSlot == 0 ? "Slot A" : "Slot B"} Complete');
     } catch (e) {
-      _showModal('Export Error', 'Error exporting save: $e');
+      _showModal('Transfer Error', 'Error during transfer: $e');
     }
   }
 

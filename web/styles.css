@@ -146,6 +146,63 @@ main {
     margin: 0 0 1rem 0;
 }
 
+/* --- Slot Tabs --- */
+.slot-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.slot-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 14px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.slot-tab:hover {
+    border-color: var(--accent-green);
+    background: rgba(16, 124, 16, 0.05);
+}
+
+.slot-tab.active {
+    border-color: var(--accent-green);
+    background: rgba(16, 124, 16, 0.1);
+    box-shadow: 0 0 15px rgba(16, 124, 16, 0.2);
+}
+
+.slot-label {
+    font-family: 'Xbox', sans-serif;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--accent-green);
+    margin-bottom: 2px;
+}
+
+.slot-filename {
+    font-size: 0.8rem;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+}
+
+.slot-stats {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-top: 2px;
+}
+
 .tree-item {
     margin-bottom: 8px;
 }
@@ -433,15 +490,12 @@ details[open] summary {
 
 .help-list li {
     margin-bottom: 1rem;
-    display: flex;
-    gap: 15px;
-    align-items: flex-start;
     color: var(--text-dim);
+    line-height: 1.5;
 }
 
 .help-list strong {
     color: var(--text-main);
-    min-width: 80px;
 }
 
 .help-icon-btn {
