@@ -77,6 +77,7 @@ class WebXbmutApp {
   late final web.HTMLElement _viewSave;
   late final web.HTMLImageElement _viewIcon;
   late final web.HTMLElement _viewId;
+  late final web.HTMLElement _viewFolder;
   late final web.HTMLElement _viewSize;
   late final web.HTMLElement _viewDate;
 
@@ -123,6 +124,7 @@ class WebXbmutApp {
     _viewSave = web.document.querySelector('#view-save') as web.HTMLElement;
     _viewIcon = web.document.querySelector('#view-icon') as web.HTMLImageElement;
     _viewId = web.document.querySelector('#view-id') as web.HTMLElement;
+    _viewFolder = web.document.querySelector('#view-folder') as web.HTMLElement;
     _viewSize = web.document.querySelector('#view-size') as web.HTMLElement;
     _viewDate = web.document.querySelector('#view-date') as web.HTMLElement;
 
@@ -306,7 +308,7 @@ class WebXbmutApp {
       SelectionOption(
         label: 'Export Card Image (.bin)',
         value: 'card',
-        iconPath: 'icons/export.svg',
+        iconPath: 'icons/OG-XBOX-Card.svg',
       ),
       SelectionOption(
         label: 'Export All Saves to .zip',
@@ -521,8 +523,8 @@ class WebXbmutApp {
 
     _otherLinksBtn.addEventListener('click', (web.MouseEvent e) {
        _showSelection<String>('Other Links', [
-         SelectionOption(label: 'Google', url: 'https://google.com', iconPath: 'icons/help.svg'),
-         SelectionOption(label: 'NFL2K5Tool Web', url: 'https://bad-al.github.io/nfl2k5tool_web/', iconPath: 'icons/help.svg'),
+         SelectionOption(label: 'Google', url: 'https://google.com', iconPath: 'icons/link.svg'),
+         SelectionOption(label: 'NFL2K5Tool Web', url: 'https://bad-al.github.io/nfl2k5tool_web/', iconPath: 'icons/link.svg'),
        ]);
     }.toJS);
 
@@ -642,9 +644,22 @@ class WebXbmutApp {
     btn.textContent = 'Create New Memory Unit';
     btn.onclick = (web.Event e) {
       e.stopPropagation();
-      _createNewMU();
+      _handleCreateNewMenu();
     }.toJS;
     _dropzone.appendChild(btn);
+  }
+
+  Future<void> _handleCreateNewMenu() async {
+    final result = await _showSelection<int>('Select Card Capacity', [
+      SelectionOption(label: '8 MB (Standard)', value: 8, iconPath: 'icons/OG-XBOX-Card.svg'),
+      SelectionOption(label: '16 MB', value: 16, iconPath: 'icons/OG-XBOX-Card.svg'),
+      SelectionOption(label: '32 MB', value: 32, iconPath: 'icons/OG-XBOX-Card.svg'),
+      SelectionOption(label: '64 MB', value: 64, iconPath: 'icons/OG-XBOX-Card.svg'),
+    ]);
+
+    if (result != null) {
+      _createNewMU(result);
+    }
   }
 
   void _toggleHelp(bool show) {
@@ -661,6 +676,7 @@ class WebXbmutApp {
      final bytes = (reader.result as JSArrayBuffer).toDart.asUint8List();
      
      if (name.endsWith('.zip')) {
+       _showToast('Importing...');
        _importZipToSlot(bytes, slot);
      } else {
        _loadMUToSlot(bytes, file.name, slot);
@@ -695,21 +711,22 @@ class WebXbmutApp {
     reader.readAsArrayBuffer(file);
     await reader.onLoadEnd.first;
     
-    final bytes = (reader.result as JSArrayBuffer).toDart.asUint8List();
-    
-    if (file.name.toLowerCase().endsWith('.zip')) {
-      if (_mu == null) {
-        _showModal('Error', 'Please load a Memory Unit (.bin) first before importing a .zip save.');
-        return;
-      }
-      _importZip(bytes);
-    } else {
-      _loadMU(bytes, file.name);
+         final bytes = (reader.result as JSArrayBuffer).toDart.asUint8List();
+        
+        if (file.name.toLowerCase().endsWith('.zip')) {
+          if (_mu == null) {
+            _showModal('Error', 'Please load a Memory Unit (.bin) first before importing a .zip save.');
+            return;
+          }
+          _showToast('Importing...');
+          _importZip(bytes);
+        } else {      _loadMU(bytes, file.name);
     }
   }
 
   Future<void> _handleImport(web.File file) async {
      if (!file.name.toLowerCase().endsWith('.zip')) return;
+     _showToast('Importing...');
      
      final reader = web.FileReader();
      reader.readAsArrayBuffer(file);
@@ -729,12 +746,13 @@ class WebXbmutApp {
     }
   }
 
-  void _createNewMU() {
+  void _createNewMU(int mbSize) {
     try {
-      _mus[_activeSlot] = XboxMemoryUnit.format();
-      _fileNames[_activeSlot] = 'new_card.img';
+      final sizeInBytes = mbSize * 1024 * 1024;
+      _mus[_activeSlot] = XboxMemoryUnit.format(size: sizeInBytes);
+      _fileNames[_activeSlot] = 'new_card_${mbSize}mb.img';
       _updateUI();
-      _showToast('New Memory Unit Created in Slot ${_activeSlot == 0 ? "A" : "B"}');
+      _showToast('New ${mbSize}MB Memory Unit Created in Slot ${_activeSlot == 0 ? "A" : "B"}');
     } catch (e) {
       _showModal('Creation Error', 'Error creating Memory Unit: $e');
     }
@@ -776,12 +794,26 @@ class WebXbmutApp {
   }
 
   void _renderTree() {
+    // Save expanded states
+    final expandedTitles = <String>{};
+    final detailElements = web.document.querySelectorAll('details.tree-item');
+    for (int i = 0; i < detailElements.length; i++) {
+      final details = detailElements.item(i) as web.HTMLDetailsElement;
+      if (details.open) {
+        final title = details.querySelector('.title-name-label')?.textContent;
+        if (title != null) expandedTitles.add(title);
+      }
+    }
+
     _treeContainer.innerHTML = ''.toJS;
     if (_mu == null) return;
 
     for (final title in _mu!.titles) {
       final details = web.document.createElement('details') as web.HTMLDetailsElement;
       details.className = 'tree-item';
+      if (expandedTitles.contains(title.name)) {
+        details.open = true;
+      }
       
       final summary = web.document.createElement('summary') as web.HTMLElement;
       summary.style.justifyContent = 'space-between';
@@ -798,7 +830,7 @@ class WebXbmutApp {
         iconsHtml += '<img src="data:image/bmp;base64,$base64" class="xbox-icon" style="border-radius:2px; filter:none;" alt="Game Icon">';
       }
       
-      summaryContent.innerHTML = '$iconsHtml ${title.name}'.toJS;
+      summaryContent.innerHTML = '$iconsHtml <span class="title-name-label">${title.name}</span>'.toJS;
       
       final deleteTitleBtn = web.document.createElement('img') as web.HTMLImageElement;
       deleteTitleBtn.src = 'icons/delete.svg';
@@ -874,6 +906,7 @@ class WebXbmutApp {
     _viewGame.textContent = title.name;
     _viewSave.textContent = save.name;
     _viewId.textContent = title.id;
+    _viewFolder.textContent = save.folderName;
     _viewSize.textContent = '${(save.size / 1024).toStringAsFixed(0)} KB';
     _viewDate.textContent = _formatDate(save.modifiedAt);
 
