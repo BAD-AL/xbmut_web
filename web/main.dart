@@ -20,6 +20,7 @@ class WebXbmutApp {
   late final web.HTMLDivElement _helpOverlay;
   late final web.HTMLInputElement _fileInput;
   late final web.HTMLDivElement _dropzone;
+  late final web.HTMLButtonElement _otherLinksBtn;
 
   // Alert/Toast elements
   late final web.HTMLDivElement _alertOverlay;
@@ -31,6 +32,10 @@ class WebXbmutApp {
   late final web.HTMLElement _confirmMessage;
   late final web.HTMLButtonElement _confirmYes;
   late final web.HTMLButtonElement _confirmNo;
+  late final web.HTMLDivElement _selectionOverlay;
+  late final web.HTMLElement _selectionTitle;
+  late final web.HTMLDivElement _selectionOptions;
+  late final web.HTMLButtonElement _selectionCancel;
   late final web.HTMLDivElement _toast;
   late final web.HTMLElement _toastMessage;
 
@@ -54,6 +59,7 @@ class WebXbmutApp {
     _helpOverlay = web.document.querySelector('#help-overlay') as web.HTMLDivElement;
     _fileInput = web.document.querySelector('#file-input') as web.HTMLInputElement;
     _dropzone = web.document.querySelector('.dropzone') as web.HTMLDivElement;
+    _otherLinksBtn = web.document.querySelector('#other-links-btn') as web.HTMLButtonElement;
 
     _alertOverlay = web.document.querySelector('#alert-overlay') as web.HTMLDivElement;
     _alertTitle = web.document.querySelector('#alert-title') as web.HTMLElement;
@@ -65,6 +71,11 @@ class WebXbmutApp {
     _confirmMessage = web.document.querySelector('#confirm-message') as web.HTMLElement;
     _confirmYes = web.document.querySelector('#confirm-yes') as web.HTMLButtonElement;
     _confirmNo = web.document.querySelector('#confirm-no') as web.HTMLButtonElement;
+
+    _selectionOverlay = web.document.querySelector('#selection-overlay') as web.HTMLDivElement;
+    _selectionTitle = web.document.querySelector('#selection-title') as web.HTMLElement;
+    _selectionOptions = web.document.querySelector('#selection-options') as web.HTMLDivElement;
+    _selectionCancel = web.document.querySelector('#selection-cancel') as web.HTMLButtonElement;
 
     _toast = web.document.querySelector('#toast') as web.HTMLDivElement;
     _toastMessage = web.document.querySelector('#toast-message') as web.HTMLElement;
@@ -128,6 +139,17 @@ class WebXbmutApp {
       return;
     }
 
+    // LB/RB Navigation (Tab/Shift+Tab)
+    if (gp.buttons[4].pressed) { // LB
+      _moveFocus(-1);
+      _lastGamepadUpdateTime = now;
+      return;
+    } else if (gp.buttons[5].pressed) { // RB
+      _moveFocus(1);
+      _lastGamepadUpdateTime = now;
+      return;
+    }
+
     // Navigation (D-Pad or Left Stick)
     final axisX = gp.axes[0] as double;
     final axisY = gp.axes[1] as double;
@@ -173,7 +195,9 @@ class WebXbmutApp {
   }
 
   void _goBack() {
-    if (_confirmOverlay.style.display == 'flex') {
+    if (_selectionOverlay.style.display == 'flex') {
+      _selectionCancel.click();
+    } else if (_confirmOverlay.style.display == 'flex') {
       _confirmNo.click();
     } else if (_alertOverlay.style.display == 'flex') {
       _alertClose.click();
@@ -186,7 +210,8 @@ class WebXbmutApp {
 
   void _moveFocus(int direction) {
     web.HTMLElement? activeOverlay;
-    if (_confirmOverlay.style.display == 'flex') activeOverlay = _confirmOverlay;
+    if (_selectionOverlay.style.display == 'flex') activeOverlay = _selectionOverlay;
+    else if (_confirmOverlay.style.display == 'flex') activeOverlay = _confirmOverlay;
     else if (_alertOverlay.style.display == 'flex') activeOverlay = _alertOverlay;
     else if (_helpOverlay.style.display == 'flex') activeOverlay = _helpOverlay;
 
@@ -233,9 +258,30 @@ class WebXbmutApp {
   }
 
   void _setupExportAll() {
-    web.document.querySelector('#export-all-btn')?.addEventListener('click', (web.MouseEvent e) {
-      _exportAll();
+    web.document.querySelector('#export-btn')?.addEventListener('click', (web.MouseEvent e) {
+      _handleExportMenu();
     }.toJS);
+  }
+
+  Future<void> _handleExportMenu() async {
+    final result = await _showSelection<String>('Export Options', [
+      SelectionOption(
+        label: 'Export Card Image (.bin)',
+        value: 'card',
+        iconPath: 'icons/export.svg',
+      ),
+      SelectionOption(
+        label: 'Export All Saves to .zip',
+        value: 'zip',
+        iconPath: 'icons/zip.svg',
+      ),
+    ]);
+
+    if (result == 'card') {
+      _exportCard();
+    } else if (result == 'zip') {
+      _exportAll();
+    }
   }
 
   void _showModal(String title, String message) {
@@ -275,6 +321,70 @@ class WebXbmutApp {
     return completer.future;
   }
 
+  Future<T?> _showSelection<T>(String title, List<SelectionOption<T>> options) {
+    final completer = Completer<T?>();
+    _selectionTitle.textContent = title;
+    _selectionOptions.innerHTML = ''.toJS;
+    _selectionOverlay.style.display = 'flex';
+
+    for (final option in options) {
+      final el = web.document.createElement(option.url != null ? 'a' : 'div') as web.HTMLElement;
+      el.className = 'selection-item';
+      el.tabIndex = 0;
+      
+      if (option.url != null) {
+        (el as web.HTMLAnchorElement).href = option.url!;
+        (el as web.HTMLAnchorElement).target = '_blank';
+      }
+
+      final icon = web.document.createElement('img') as web.HTMLImageElement;
+      icon.src = option.iconPath ?? 'icons/folder.svg';
+      icon.className = 'xbox-icon';
+      icon.style.filter = 'none';
+
+      final text = web.document.createElement('span') as web.HTMLElement;
+      text.textContent = option.label;
+
+      el.appendChild(icon);
+      el.appendChild(text);
+
+      el.addEventListener('click', (web.Event e) {
+        _selectionOverlay.style.display = 'none';
+        if (option.url == null) {
+          completer.complete(option.value);
+        } else {
+          completer.complete(null);
+        }
+      }.toJS);
+
+      el.addEventListener('keydown', (web.KeyboardEvent e) {
+        if (e.key == 'Enter' || e.key == ' ') {
+          e.preventDefault();
+          el.click();
+        }
+      }.toJS);
+
+      _selectionOptions.appendChild(el);
+    }
+
+    if (_selectionOptions.children.length > 0) {
+      (_selectionOptions.children.item(0) as web.HTMLElement).focus();
+    } else {
+      _selectionCancel.focus();
+    }
+
+    late web.EventListener cancelListener;
+    cancelListener = (web.Event e) {
+      _selectionOverlay.style.display = 'none';
+      _selectionCancel.removeEventListener('click', cancelListener);
+      if (!completer.isCompleted) completer.complete(null);
+    }.toJS;
+
+    _selectionCancel.addEventListener('click', cancelListener);
+
+    return completer.future;
+  }
+
   void _showToast(String message) {
     _toastMessage.textContent = message;
     _toast.style.display = 'flex';
@@ -289,24 +399,24 @@ class WebXbmutApp {
       return;
     }
     
-    final btn = web.document.querySelector('#export-all-btn') as web.HTMLButtonElement;
-    final textSpan = btn.querySelector('span') as web.HTMLElement;
-    final originalText = textSpan.textContent;
-    textSpan.textContent = 'Processing...';
-    btn.disabled = true;
+    final btn = web.document.querySelector('#export-btn') as web.HTMLButtonElement?;
+    final textSpan = btn?.querySelector('span') as web.HTMLElement?;
+    final originalText = textSpan?.textContent;
+    if (textSpan != null) textSpan.textContent = 'Processing...';
+    if (btn != null) btn.disabled = true;
 
     // Allow UI to update
     await Future.delayed(const Duration(milliseconds: 100));
 
     try {
       final bytes = _mu!.exportAll();
+      _showToast('Exporting...');
       _downloadFile(bytes, 'all_saves.zip');
-      _showToast('Export Complete');
     } catch (e) {
       _showModal('Export Error', 'Error exporting all: $e');
     } finally {
-      textSpan.textContent = originalText;
-      btn.disabled = false;
+      if (textSpan != null) textSpan.textContent = originalText ?? 'Export';
+      if (btn != null) btn.disabled = false;
     }
   }
 
@@ -341,9 +451,11 @@ class WebXbmutApp {
       }
     }.toJS;
 
-    // Header buttons
-    web.document.querySelector('#export-card-btn')?.addEventListener('click', (web.MouseEvent e) {
-      _exportCard();
+    _otherLinksBtn.addEventListener('click', (web.MouseEvent e) {
+       _showSelection<String>('Other Links', [
+         SelectionOption(label: 'Google', url: 'https://google.com', iconPath: 'icons/help.svg'),
+         SelectionOption(label: 'NFL2K5Tool Web', url: 'https://bad-al.github.io/nfl2k5tool_web/', iconPath: 'icons/help.svg'),
+       ]);
     }.toJS);
 
     web.document.querySelector('.help-icon-btn')?.addEventListener('click', (web.MouseEvent e) {
@@ -670,8 +782,8 @@ class WebXbmutApp {
     final path = '${_viewGame.textContent}/${_viewSave.textContent}';
     try {
       final bytes = _mu!.export(path);
+      _showToast('Exporting...');
       _downloadFile(bytes, '${_viewSave.textContent}.zip');
-      _showToast('Save Exported');
     } catch (e) {
       _showModal('Export Error', 'Error exporting save: $e');
     }
@@ -680,8 +792,8 @@ class WebXbmutApp {
   void _exportCard() {
     if (_mu == null) return;
     try {
+      _showToast('Exporting...');
       _downloadFile(_mu!.bytes, _fileName ?? 'card.img');
-      _showToast('Card Image Exported');
     } catch (e) {
       _showModal('Export Error', 'Error exporting card: $e');
     }
@@ -696,4 +808,18 @@ class WebXbmutApp {
     anchor.click();
     web.URL.revokeObjectURL(url);
   }
+}
+
+class SelectionOption<T> {
+  final String label;
+  final T? value;
+  final String? iconPath;
+  final String? url;
+
+  SelectionOption({
+    required this.label,
+    this.value,
+    this.iconPath,
+    this.url,
+  });
 }

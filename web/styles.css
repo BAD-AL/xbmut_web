@@ -338,7 +338,7 @@ details[open] summary {
     background-color: transparent;
     border: none;
     color: #ffffff;
-    font-family: 'Xbox', sans-serif;
+    font-family: 'Xbox2', sans-serif;
     text-transform: uppercase;
     letter-spacing: 1px;
     padding: 12px 24px;
@@ -475,6 +475,41 @@ details[open] summary {
 .dropzone:hover {
     border-color: var(--accent-green);
     background: rgba(16, 124, 16, 0.03);
+}
+
+/* --- Selection List --- */
+.selection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px 20px 10px 10px; /* Extra right padding for transform + focus ring */
+    overflow-x: hidden;
+}
+
+.selection-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    min-width: 350px;
+}
+
+.selection-item:hover, .selection-item:focus-visible {
+    border-color: var(--accent-green);
+    background: rgba(16, 124, 16, 0.1);
+    transform: translateX(5px);
+}
+
+.selection-item:active {
+    transform: scale(0.98);
 }
 
 /* --- Animation --- */
