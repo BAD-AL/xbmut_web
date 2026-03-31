@@ -398,11 +398,12 @@ class WebXbmutApp {
     _selectionOverlay.style.display = 'flex';
 
     for (final option in options) {
-      final el = web.document.createElement(option.url != null ? 'a' : 'div') as web.HTMLElement;
+      final isExternal = option.url != null && option.url!.startsWith('http');
+      final el = web.document.createElement(isExternal ? 'a' : 'div') as web.HTMLElement;
       el.className = 'selection-item';
       el.tabIndex = 0;
       
-      if (option.url != null) {
+      if (isExternal) {
         (el as web.HTMLAnchorElement).href = option.url!;
         (el as web.HTMLAnchorElement).target = '_blank';
       }
@@ -420,8 +421,8 @@ class WebXbmutApp {
 
       el.addEventListener('click', (web.Event e) {
         _selectionOverlay.style.display = 'none';
-        if (option.url == null) {
-          completer.complete(option.value);
+        if (!isExternal) {
+          completer.complete(option.value ?? option as T);
         } else {
           completer.complete(null);
         }
@@ -510,14 +511,18 @@ class WebXbmutApp {
       _dropzone.style.borderColor = 'var(--border-color)';
       final dt = e.dataTransfer;
       if (dt != null && dt.files.length > 0) {
-        _handleFile(dt.files.item(0)!);
+        for (int i = 0; i < dt.files.length; i++) {
+          _handleFile(dt.files.item(i)!);
+        }
       }
     }.toJS);
 
     // File input events
     _fileInput.onchange = (web.Event e) {
       if (_fileInput.files != null && _fileInput.files!.length > 0) {
-        _handleFile(_fileInput.files!.item(0)!);
+        for (int i = 0; i < _fileInput.files!.length; i++) {
+          _handleFile(_fileInput.files!.item(i)!);
+        }
       }
     }.toJS;
 
@@ -555,7 +560,9 @@ class WebXbmutApp {
         if (_activeSlot != i) btn.classList.remove('active');
         final dt = e.dataTransfer;
         if (dt != null && dt.files.length > 0) {
-          _handleImportToSlot(dt.files.item(0)!, i);
+          for (int j = 0; j < dt.files.length; j++) {
+            _handleImportToSlot(dt.files.item(j)!, i);
+          }
         }
       }.toJS);
     }
@@ -583,14 +590,16 @@ class WebXbmutApp {
       _toggleHelp(false);
     }.toJS);
 
-    _dropzone.addEventListener('click', (web.MouseEvent e) {
-      _fileInput.click();
-    }.toJS);
+    final loadAction = (web.Event e) {
+      e.preventDefault();
+      _handleLoadSource();
+    };
+
+    _dropzone.addEventListener('click', loadAction.toJS);
 
     _dropzone.addEventListener('keydown', (web.KeyboardEvent e) {
       if (e.key == 'Enter' || e.key == ' ') {
-        e.preventDefault();
-        _fileInput.click();
+        loadAction(e);
       }
     }.toJS);
 
@@ -617,7 +626,9 @@ class WebXbmutApp {
         e.preventDefault();
         final dt = e.dataTransfer;
         if (dt != null && dt.files.length > 0) {
-          _handleImport(dt.files.item(0)!);
+          for (int i = 0; i < dt.files.length; i++) {
+            _handleImport(dt.files.item(i)!);
+          }
         }
       }
     }.toJS);
@@ -647,6 +658,82 @@ class WebXbmutApp {
       _handleCreateNewMenu();
     }.toJS;
     _dropzone.appendChild(btn);
+  }
+
+  Future<void> _handleLoadSource() async {
+    final result = await _showSelection<String>('Load Source', [
+      SelectionOption(label: 'From Computer', value: 'local', iconPath: 'icons/folder.svg'),
+      SelectionOption(label: 'From Server (Curated)', value: 'server', iconPath: 'icons/logo_orb.svg'),
+    ]);
+
+    if (result == 'local') {
+      _fileInput.click();
+    } else if (result == 'server') {
+      _handleLoadFromServer();
+    }
+  }
+
+  Future<void> _handleLoadFromServer() async {
+    final result = await _showSelection<SelectionOption>('Select Curated Save', [
+      SelectionOption( label: 'NFL2K5 Saves',  url: 'saves/NFL2K5Saves.zip',  iconPath: 'icons/zip.svg',  tag: '64'), //64 = MB size
+      SelectionOption( label: 'AR-MAX XBOX part 1', url: 'saves/AR-MAX-XBOX_1.zip', iconPath: 'icons/zip.svg', tag: '64'),
+      SelectionOption( label: 'AR-MAX XBOX part 3', url: 'saves/AR-MAX-XBOX_3.zip', iconPath: 'icons/zip.svg', tag: '64'),
+      SelectionOption( label: 'AR-MAX XBOX part 5', url: 'saves/AR-MAX-XBOX_5.zip', iconPath: 'icons/zip.svg', tag: '64'),
+      SelectionOption( label: 'AR-MAX XBOX part 7', url: 'saves/AR-MAX-XBOX_7.zip', iconPath: 'icons/zip.svg', tag: '64'),
+      SelectionOption( label: 'AR-MAX XBOX part 2', url: 'saves/AR-MAX-XBOX_2.zip', iconPath: 'icons/zip.svg', tag: '64'),
+      SelectionOption( label: 'AR-MAX XBOX part 4', url: 'saves/AR-MAX-XBOX_4.zip', iconPath: 'icons/zip.svg', tag: '64'),
+      SelectionOption( label: 'AR-MAX XBOX part 6', url: 'saves/AR-MAX-XBOX_6.zip', iconPath: 'icons/zip.svg', tag: '64'),
+      SelectionOption( label: 'AR-MAX XBOX part 8', url: 'saves/AR-MAX-XBOX_8.zip', iconPath: 'icons/zip.svg', tag: '64'),
+      SelectionOption( label:'Halo 1 and 2', url: 'saves/AR-MAX-XBOX_Halo-1-and-2.zip', iconPath: 'icons/zip.svg', tag: '16'),
+
+      SelectionOption( label:'Doom 3', url:'saves/AR-MAX-XBOX_DOOM-3.zip', iconPath: 'icons/zip.svg', tag: '64'),
+      SelectionOption( label:'Mega-X-Key part 1', url:'saves/Mega-x-Saves_1.zip',iconPath: 'icons/zip.svg', tag: '64'),
+      SelectionOption( label:'Mega-X-Key part 2', url:'saves/Mega-x-Saves_2.zip', iconPath: 'icons/zip.svg', tag: '8'),
+
+      SelectionOption(
+        label: 'Google (Test Link)', 
+        url: 'https://google.com', 
+        iconPath: 'icons/help.svg',
+      ),
+      // Add more as needed
+    ]);
+
+    if (result != null) {
+      if (result.url != null && result.url!.startsWith('http')) {
+         web.window.open(result.url!, '_blank');
+      } else {
+         _loadSaveFromServer(result);
+      }
+    }
+  }
+
+  Future<void> _loadSaveFromServer(SelectionOption option) async {
+    if (_mu != null) {
+      final confirm = await _showConfirm('Replace Memory Unit', 'Loading from server will replace the current Memory Unit in Slot ${_activeSlot == 0 ? "A" : "B"}. Proceed?');
+      if (!confirm) return;
+    }
+
+    _showToast('Downloading...');
+    try {
+      final response = await web.window.fetch(option.url!.toJS).toDart;
+      if (!response.ok) throw Exception('Server responded with ${response.status}');
+      
+      final blob = await response.blob().toDart;
+      final arrayBuffer = await blob.arrayBuffer().toDart;
+      final bytes = arrayBuffer.toDart.asUint8List();
+
+      final mbSize = int.tryParse(option.tag ?? '8') ?? 8;
+      final sizeInBytes = mbSize * 1024 * 1024;
+
+      _mus[_activeSlot] = XboxMemoryUnit.format(size: sizeInBytes);
+      _fileNames[_activeSlot] = '${option.label.replaceAll(' ', '_')}.img';
+      
+      _mus[_activeSlot]!.importZip(bytes);
+      _updateUI();
+      _showToast('${option.label} Loaded Successfully');
+    } catch (e) {
+      _showModal('Download Error', 'Error downloading from server: $e');
+    }
   }
 
   Future<void> _handleCreateNewMenu() async {
@@ -1032,11 +1119,13 @@ class SelectionOption<T> {
   final T? value;
   final String? iconPath;
   final String? url;
+  final String? tag;
 
   SelectionOption({
     required this.label,
     this.value,
     this.iconPath,
     this.url,
+    this.tag,
   });
 }
