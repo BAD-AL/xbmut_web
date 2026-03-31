@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120">
+    <defs>
+        <!-- The signature OG-XBOX Green Gradient -->
+        <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#25f20f;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#107c10;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#021a02;stop-opacity:1" />
+        </linearGradient>
+
+        <!-- Neon Glow -->
+        <filter id="cardGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+        
+        <!-- Recessed Detail Shadow -->
+        <radialGradient id="indentGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#000000;stop-opacity:0.4" />
+            <stop offset="100%" style="stop-color:#000000;stop-opacity:0" />
+        </radialGradient>
+    </defs>
+
+    <!-- The Memory Unit Body -->
+    <g filter="url(#cardGlow)">
+        <!-- Main Shape with Arched Top and Side Taper -->
+        <path d="M15,100 L15,40 C15,30 30,20 50,20 C70,20 85,30 85,40 L85,100 C85,102 83,104 81,104 L19,104 C17,104 15,102 15,100 Z" 
+              fill="url(#cardGrad)" stroke="#050505" stroke-width="1" />
+        
+        <!-- Side Grip Ribs (Left) -->
+        <path d="M15,35 L12,35 M15,40 L12,40 M15,45 L12,45 M15,50 L12,50" stroke="#050505" stroke-width="2" stroke-linecap="round" opacity="0.6" />
+        <!-- Side Grip Ribs (Right) -->
+        <path d="M85,35 L88,35 M85,40 L88,40 M85,45 L88,45 M85,50 L88,50" stroke="#050505" stroke-width="2" stroke-linecap="round" opacity="0.6" />
+
+        <!-- Circular Indentation/Button Area -->
+        <circle cx="50" cy="45" r="12" fill="url(#indentGrad)" stroke="#050505" stroke-width="0.5" opacity="0.5" />
+        <circle cx="50" cy="45" r="8" fill="rgba(0,0,0,0.3)" stroke="#25f20f" stroke-width="0.5" opacity="0.8" />
+
+        <!-- Horizontal Divide Line -->
+        <path d="M16,65 C30,62 70,62 84,65" fill="none" stroke="#050505" stroke-width="0.5" opacity="0.4" />
+
+        <!-- XBOX Text 
+        <g transform="translate(50, 95)" opacity="0.8">
+            <text x="0" y="0" font-family="Impact, Arial, sans-serif" font-weight="bold" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="2">XBOX</text>
+        </g> -->
+        
+        <!-- Connector Plug at bottom -->
+        <rect x="35" y="104" width="30" height="8" rx="1" fill="#050505" />
+    </g>
+
+    <!-- Top Gloss highlight -->
+    <path d="M25,28 C35,23 65,23 75,28 C75,28 70,35 50,35 C30,35 25,28 25,28 Z" fill="#ffffff" opacity="0.2" />
+</svg>
