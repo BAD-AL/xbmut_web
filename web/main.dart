@@ -675,8 +675,8 @@ class WebXbmutApp {
 
   Future<void> _handleLoadFromServer() async {
     final result = await _showSelection<SelectionOption>('Select Curated Save', [
-      SelectionOption( label: 'NFL2K5 Saves',  url: 'saves/NFL2K5Saves.zip',  iconPath: 'icons/zip.svg',  tag: '64'), //64 = MB size
       SelectionOption( label: 'AR-MAX XBOX part 1', url: 'saves/AR-MAX-XBOX_1.zip', iconPath: 'icons/zip.svg', tag: '64'),
+      SelectionOption( label: 'AR-MAX XBOX part 2', url: 'saves/AR-MAX-XBOX_2.zip', iconPath: 'icons/zip.svg', tag: '64'),
       SelectionOption( label: 'AR-MAX XBOX part 3', url: 'saves/AR-MAX-XBOX_3.zip', iconPath: 'icons/zip.svg', tag: '64'),
       SelectionOption( label: 'AR-MAX XBOX part 5', url: 'saves/AR-MAX-XBOX_5.zip', iconPath: 'icons/zip.svg', tag: '64'),
       SelectionOption( label: 'AR-MAX XBOX part 7', url: 'saves/AR-MAX-XBOX_7.zip', iconPath: 'icons/zip.svg', tag: '64'),
@@ -684,17 +684,16 @@ class WebXbmutApp {
       SelectionOption( label: 'AR-MAX XBOX part 4', url: 'saves/AR-MAX-XBOX_4.zip', iconPath: 'icons/zip.svg', tag: '64'),
       SelectionOption( label: 'AR-MAX XBOX part 6', url: 'saves/AR-MAX-XBOX_6.zip', iconPath: 'icons/zip.svg', tag: '64'),
       SelectionOption( label: 'AR-MAX XBOX part 8', url: 'saves/AR-MAX-XBOX_8.zip', iconPath: 'icons/zip.svg', tag: '64'),
-      SelectionOption( label:'Halo 1 and 2', url: 'saves/AR-MAX-XBOX_Halo-1-and-2.zip', iconPath: 'icons/zip.svg', tag: '16'),
+      SelectionOption( label: 'AR-MAX Halo 1 and 2', url: 'saves/AR-MAX-XBOX_Halo-1-and-2.zip', iconPath: 'icons/zip.svg', tag: '16'),
 
-      SelectionOption( label:'Doom 3', url:'saves/AR-MAX-XBOX_DOOM-3.zip', iconPath: 'icons/zip.svg', tag: '64'),
+      //SelectionOption( label:'AR-MAX Doom 3', url:'saves/AR-MAX-XBOX_DOOM-3.zip', iconPath: 'icons/zip.svg', tag: '64'),
       SelectionOption( label:'Mega-X-Key part 1', url:'saves/Mega-x-Saves_1.zip',iconPath: 'icons/zip.svg', tag: '64'),
       SelectionOption( label:'Mega-X-Key part 2', url:'saves/Mega-x-Saves_2.zip', iconPath: 'icons/zip.svg', tag: '8'),
-
-      SelectionOption(
-        label: 'Google (Test Link)', 
-        url: 'https://google.com', 
-        iconPath: 'icons/help.svg',
-      ),
+      SelectionOption( label:'nfl2K5rosters.com part 1',  url: 'saves/nfl2k5rosters.com_1.zip',  iconPath: 'icons/zip.svg',  tag: '32'), 
+      SelectionOption( label:'nfl2K5rosters.com part 2',  url: 'saves/nfl2k5rosters.com_2.zip',  iconPath: 'icons/zip.svg',  tag: '32'),
+      SelectionOption( label:'nfl2K5rosters.com part 3',  url: 'saves/nfl2k5rosters.com_3.zip',  iconPath: 'icons/zip.svg',  tag: '32'),
+      SelectionOption( label:'nfl2K5rosters.com Capa historic rosters 3',  url: 'saves/Capa_New_Historic3.2krosters.zip',  iconPath: 'icons/zip.svg',  tag: '32'),
+      
       // Add more as needed
     ]);
 
@@ -861,6 +860,9 @@ class WebXbmutApp {
     _slotBName.textContent = _fileNames[1] ?? 'Empty';
     _slotAStats.textContent = _getSlotStats(0);
     _slotBStats.textContent = _getSlotStats(1);
+    
+    _slotABtn.title = 'Slot A: ${_fileNames[0] ?? "Empty"}';
+    _slotBBtn.title = 'Slot B: ${_fileNames[1] ?? "Empty"}';
 
     if (_mu == null) {
       _infoDevice.innerHTML = '<strong>Device:</strong> none'.toJS;
