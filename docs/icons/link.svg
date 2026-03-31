@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <defs>
+        <!-- The signature OG-XBOX Green Gradient -->
+        <linearGradient id="linkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#25f20f;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#107c10;stop-opacity:1" />
+        </linearGradient>
+
+        <!-- Neon Glow for that industrial/cyber look -->
+        <filter id="linkGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="1" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+    </defs>
+
+    <g transform="rotate(-45, 12, 12)">
+        <!-- The Chain Link Path -->
+        <g filter="url(#linkGlow)">
+            <!-- Link 1 (Bottom Left) -->
+            <path d="M7.5,18.5 C5,18.5 3,16.5 3,14 C3,11.5 5,9.5 7.5,9.5 L9,9.5" fill="none" stroke="url(#linkGrad)" stroke-width="2.5" stroke-linecap="round" />
+            <!-- Link 2 (Top Right) -->
+            <path d="M16.5,5.5 C19,5.5 21,7.5 21,10 C21,12.5 19,14.5 16.5,14.5 L15,14.5" fill="none" stroke="url(#linkGrad)" stroke-width="2.5" stroke-linecap="round" />
+            <!-- Middle Connector -->
+            <path d="M8,12 L16,12" fill="none" stroke="url(#linkGrad)" stroke-width="2.5" stroke-linecap="round" />
+        </g>
+
+        <!-- Subtle white highlight on top edges for more "pop" -->
+        <g opacity="0.6" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-linecap="round">
+            <path d="M7.5,9.5 L9,9.5" />
+            <path d="M16.5,5.5 C18,5.5 19.5,6.5 20,7.5" />
+            <path d="M8.5,12 L11,12" />
+        </g>
+    </g>
+</svg>
