@@ -528,8 +528,11 @@ class WebXbmutApp {
 
     _otherLinksBtn.addEventListener('click', (web.MouseEvent e) {
        _showSelection<String>('Other Links', [
-         SelectionOption(label: 'Google', url: 'https://google.com', iconPath: 'icons/link.svg'),
-         SelectionOption(label: 'NFL2K5Tool Web', url: 'https://bad-al.github.io/nfl2k5tool_web/', iconPath: 'icons/link.svg'),
+         SelectionOption(label: 'PS2 Save Manager', url: 'https://bad-al.github.io/mymc_web/', iconPath: 'icons/link.svg'),
+         SelectionOption(label: 'Game Faqs XBOX Saves', url: 'https://gamefaqs.gamespot.com/pc/932095-halo-2/saves', iconPath: 'icons/link.svg'),
+         SelectionOption(label: 'NFL2K4 Gamesave Editor', url: 'https://bad-al.github.io/nfl2k4tool_web/', iconPath: 'icons/link.svg'),
+         SelectionOption(label: 'NFL2K5 Gamesave Editor', url: 'https://bad-al.github.io/nfl2k5tool_web/', iconPath: 'icons/link.svg'),
+         SelectionOption(label: 'OG XBOX Emulator', url: 'https://xemu.app/', iconPath: 'icons/link.svg'),
        ]);
     }.toJS);
 
