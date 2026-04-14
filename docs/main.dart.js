@@ -60,7 +60,7 @@ if(!1===s)return n.i
 if(!0===s)return a
 r=Object.getPrototypeOf(a)
 if(s===r)return n.i
-if(n.e===r)throw A.e(A.i_("Return interceptor for "+A.j(s(a,n))))}q=a.constructor
+if(n.e===r)throw A.e(A.i_("Return interceptor for "+A.k(s(a,n))))}q=a.constructor
 if(q==null)p=null
 else{o=$.fg
 if(o==null)o=$.fg=v.getIsolateTag("_$dart_js")
@@ -217,7 +217,7 @@ return"minified:"+a},
 lU(a,b){var s
 if(b!=null){s=b.x
 if(s!=null)return s}return t.da.b(a)},
-j(a){var s
+k(a){var s
 if(typeof a=="string")return a
 if(typeof a=="number"){if(a!==0)return""+a}else if(!0===a)return"true"
 else if(!1===a)return"false"
@@ -377,8 +377,8 @@ if(!("message" in a))return a
 s=a.message
 if("number" in a&&typeof a.number=="number"){r=a.number
 q=r&65535
-if((B.b.L(r,16)&8191)===10)switch(q){case 438:return A.aF(a,A.fX(A.j(s)+" (Error "+q+")",null))
-case 445:case 5007:A.j(s)
+if((B.b.L(r,16)&8191)===10)switch(q){case 438:return A.aF(a,A.fX(A.k(s)+" (Error "+q+")",null))
+case 445:case 5007:A.k(s)
 return A.aF(a,new A.bG())}}if(a instanceof TypeError){p=$.iR()
 o=$.iS()
 n=$.iT()
@@ -1227,11 +1227,11 @@ b.push(A.ic(p,r,q))
 return
 case-4:b.push(A.ig(p,b.pop(),s))
 return
-default:throw A.e(A.ch("Unexpected state under `()`: "+A.j(o)))}},
+default:throw A.e(A.ch("Unexpected state under `()`: "+A.k(o)))}},
 k7(a,b){var s=b.pop()
 if(0===s){b.push(A.c3(a.u,1,"0&"))
 return}if(1===s){b.push(A.c3(a.u,4,"1&"))
-return}throw A.e(A.ch("Unexpected extended operation "+A.j(s)))},
+return}throw A.e(A.ch("Unexpected extended operation "+A.k(s)))},
 i7(a,b){var s=b.splice(a.p)
 A.ib(a.u,a.e,s)
 a.p=b.pop()
@@ -1809,9 +1809,9 @@ if(b>=s)return""
 return A.jO(a,b,c==null||c>s?s:c)},
 hV(a,b,c){var s=J.fO(b)
 if(!s.D())return a
-if(c.length===0){do a+=A.j(s.gG())
-while(s.D())}else{a+=A.j(s.gG())
-while(s.D())a=a+c+A.j(s.gG())}return a},
+if(c.length===0){do a+=A.k(s.gG())
+while(s.D())}else{a+=A.k(s.gG())
+while(s.D())a=a+c+A.k(s.gG())}return a},
 hU(){return A.aX(new Error())},
 jn(a){if(a<-864e13||a>864e13)A.o(A.Q(a,-864e13,864e13,"millisecondsSinceEpoch",null))
 A.bn(!1,"isUtc",t.v)
@@ -1877,15 +1877,15 @@ return r.charCodeAt(0)==0?r:r},
 kR(a,b){var s,r,q,p,o,n,m,l=a.gU(a),k=0,j=0
 for(;;){if(!(k<80||j<3))break
 if(!l.D())return
-s=A.j(l.gG())
+s=A.k(l.gG())
 B.a.p(b,s)
 k+=s.length+2;++j}if(!l.D()){if(j<=5)return
 if(0>=b.length)return A.a(b,-1)
 r=b.pop()
 if(0>=b.length)return A.a(b,-1)
 q=b.pop()}else{p=l.gG();++j
-if(!l.D()){if(j<=4){B.a.p(b,A.j(p))
-return}r=A.j(p)
+if(!l.D()){if(j<=4){B.a.p(b,A.k(p))
+return}r=A.k(p)
 if(0>=b.length)return A.a(b,-1)
 q=b.pop()
 k+=r.length+2}else{o=l.gG();++j
@@ -1893,8 +1893,8 @@ for(;l.D();p=o,o=n){n=l.gG();++j
 if(j>100){for(;;){if(!(k>75&&j>3))break
 if(0>=b.length)return A.a(b,-1)
 k-=b.pop().length+2;--j}B.a.p(b,"...")
-return}}q=A.j(p)
-r=A.j(o)
+return}}q=A.k(p)
+r=A.k(o)
 k+=r.length+q.length+4}}if(j>b.length+2){k+=5
 m="..."}else m=null
 for(;;){if(!(k>80&&b.length>3))break
@@ -2721,7 +2721,7 @@ this.b=b
 this.c=c},
 eE:function eE(a){this.a=a},
 eF:function eF(a){this.a=a},
-k:function k(a,b,c,d,e,f){var _=this
+j:function j(a,b,c,d,e,f){var _=this
 _.a=a
 _.b=b
 _.c=c
@@ -2950,7 +2950,7 @@ v(a,b){return(a|0)===a?a/b|0:this.ce(a,b)},
 ce(a,b){var s=a/b
 if(s>=-2147483648&&s<=2147483647)return s|0
 if(s>0){if(s!==1/0)return Math.floor(s)}else if(s>-1/0)return Math.ceil(s)
-throw A.e(A.bh("Result of truncating division is "+A.j(s)+": "+A.j(a)+" ~/ "+b))},
+throw A.e(A.bh("Result of truncating division is "+A.k(s)+": "+A.k(a)+" ~/ "+b))},
 K(a,b){if(b<0)throw A.e(A.c9(b))
 return b>31?0:a<<b>>>0},
 a0(a,b){return b>31?0:a<<b>>>0},
@@ -3396,7 +3396,7 @@ A.fC.prototype={
 $2(a,b){this.a(A.F(a),b)},
 $S:16}
 A.W.prototype={
-j(a){return A.j(this.a)},
+j(a){return A.k(this.a)},
 $iA:1,
 gaw(){return this.b}}
 A.dM.prototype={
@@ -3740,9 +3740,9 @@ $2(a,b){var s,r=this.a
 if(!r.a)this.b.a+=", "
 r.a=!1
 r=this.b
-s=A.j(a)
+s=A.k(a)
 r.a=(r.a+=s)+": "
-s=A.j(b)
+s=A.k(b)
 r.a+=s},
 $S:18}
 A.bb.prototype={
@@ -3971,7 +3971,7 @@ A.aq.prototype={}
 A.aa.prototype={
 gbq(){return"Invalid argument"+(!this.a?"(s)":"")},
 gbp(){return""},
-j(a){var s=this,r=s.c,q=r==null?"":" ("+r+")",p=s.d,o=p==null?"":": "+A.j(p),n=s.gbq()+q+o
+j(a){var s=this,r=s.c,q=r==null?"":" ("+r+")",p=s.d,o=p==null?"":": "+A.k(p),n=s.gbq()+q+o
 if(!s.a)return n
 return n+s.gbp()+": "+A.dC(s.gbG())},
 gbG(){return this.b}}
@@ -3979,10 +3979,10 @@ A.ba.prototype={
 gbG(){return A.ik(this.b)},
 gbq(){return"RangeError"},
 gbp(){var s,r=this.e,q=this.f
-if(r==null)s=q!=null?": Not less than or equal to "+A.j(q):""
-else if(q==null)s=": Not greater than or equal to "+A.j(r)
-else if(q>r)s=": Not in inclusive range "+A.j(r)+".."+A.j(q)
-else s=q<r?": Valid value range is empty":": Only valid value is "+A.j(r)
+if(r==null)s=q!=null?": Not less than or equal to "+A.k(q):""
+else if(q==null)s=": Not greater than or equal to "+A.k(r)
+else if(q>r)s=": Not in inclusive range "+A.k(r)+".."+A.k(q)
+else s=q<r?": Valid value range is empty":": Only valid value is "+A.k(r)
 return s}}
 A.cy.prototype={
 gbG(){return A.F(this.b)},
@@ -4014,7 +4014,7 @@ A.f5.prototype={
 j(a){return"Exception: "+this.a}}
 A.cv.prototype={
 j(a){var s=this.a,r=""!==s?"FormatException: "+s:"FormatException",q=this.c
-return q!=null?r+(" (at offset "+A.j(q)+")"):r}}
+return q!=null?r+(" (at offset "+A.k(q)+")"):r}}
 A.i.prototype={
 gl(a){var s,r=this.gU(this)
 for(s=0;r.D();)++s
@@ -8032,8 +8032,8 @@ for(;;)switch(s){case 0:n=q.c===0
 m=n?1:0
 l=n?"Slot B":"Slot A"
 n=t.U
-p=A.m([new A.k("Export Card Image (.bin)","card","icons/OG-XBOX-Card.svg",null,null,n),new A.k("Export All Saves to .zip","zip","icons/zip.svg",null,null,n)],t.D)
-if(q.a[m]!=null)B.a.p(p,new A.k("Transfer All to "+l,"transfer","icons/inbox.svg",null,null,n))
+p=A.m([new A.j("Export Card Image (.bin)","card","icons/OG-XBOX-Card.svg",null,null,n),new A.j("Export All Saves to .zip","zip","icons/zip.svg",null,null,n)],t.D)
+if(q.a[m]!=null)B.a.p(p,new A.j("Transfer All to "+l,"transfer","icons/inbox.svg",null,null,n))
 s=2
 return A.T(q.ao("Export Options",p,t.N),$async$aZ)
 case 2:o=b
@@ -8062,7 +8062,7 @@ l=t.p.a(o)
 new A.aH(i.a).aH(l)
 p.X()
 p.C("Transfer Complete")}catch(h){n=A.N(h)
-p.I("Transfer Error","Error during transfer: "+A.j(n))}}case 1:return A.a6(q,r)}})
+p.I("Transfer Error","Error during transfer: "+A.k(n))}}case 1:return A.a6(q,r)}})
 return A.a7($async$b6,r)},
 I(a,b){var s=this,r=s.CW
 r===$&&A.b("_alertTitle")
@@ -8098,7 +8098,7 @@ q.addEventListener("click",s.ab())
 m.addEventListener("click",r.ab())
 return o},
 ao(a1,a2,a3){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b=this,a="Attempting to rewrap a JS function.",a0="_selectionCancel"
-a3.h("l<k<0>>").a(a2)
+a3.h("l<j<0>>").a(a2)
 s=new A.t($.q,a3.h("t<0?>"))
 r=new A.as(s,a3.h("as<0?>"))
 q=b.go
@@ -8178,7 +8178,7 @@ s=1
 break}k=new A.b3(h[g].a).bF(1,"")
 o.C("Exporting...")
 o.bo(k,"all_saves.zip")}catch(f){j=A.N(f)
-o.I("Export Error","Error exporting all: "+A.j(j))}finally{if(m!=null){h=l
+o.I("Export Error","Error exporting all: "+A.k(j))}finally{if(m!=null){h=l
 if(h==null)h="Export"
 m.textContent=h}if(n!=null)n.disabled=!1}case 1:return A.a6(q,r)}})
 return A.a7($async$aU,r)},
@@ -8258,7 +8258,7 @@ b2(){var s=0,r=A.a8(t.H),q=this,p,o
 var $async$b2=A.a9(function(a,b){if(a===1)return A.a5(b,r)
 for(;;)switch(s){case 0:p=t.U
 s=2
-return A.T(q.ao("Load Source",A.m([new A.k("From Computer","local","icons/folder.svg",null,null,p),new A.k("From Server (Curated)","server","icons/logo_orb.svg",null,null,p)],t.D),t.N),$async$b2)
+return A.T(q.ao("Load Source",A.m([new A.j("From Computer","local","icons/folder.svg",null,null,p),new A.j("From Server (Curated)","server","icons/logo_orb.svg",null,null,p)],t.D),t.N),$async$b2)
 case 2:o=b
 if(o==="local"){p=q.w
 p===$&&A.b("_fileInput")
@@ -8269,7 +8269,7 @@ b1(){var s=0,r=A.a8(t.H),q=this,p,o
 var $async$b1=A.a9(function(a,b){if(a===1)return A.a5(b,r)
 for(;;)switch(s){case 0:p=t.aT
 s=2
-return A.T(q.ao("Select Curated Save",A.m([new A.k("AR-MAX XBOX part 1",null,"icons/zip.svg","saves/AR-MAX-XBOX_1.zip","64",p),new A.k("AR-MAX XBOX part 2",null,"icons/zip.svg","saves/AR-MAX-XBOX_2.zip","64",p),new A.k("AR-MAX XBOX part 3",null,"icons/zip.svg","saves/AR-MAX-XBOX_3.zip","64",p),new A.k("AR-MAX XBOX part 5",null,"icons/zip.svg","saves/AR-MAX-XBOX_5.zip","64",p),new A.k("AR-MAX XBOX part 7",null,"icons/zip.svg","saves/AR-MAX-XBOX_7.zip","64",p),new A.k("AR-MAX XBOX part 2",null,"icons/zip.svg","saves/AR-MAX-XBOX_2.zip","64",p),new A.k("AR-MAX XBOX part 4",null,"icons/zip.svg","saves/AR-MAX-XBOX_4.zip","64",p),new A.k("AR-MAX XBOX part 6",null,"icons/zip.svg","saves/AR-MAX-XBOX_6.zip","64",p),new A.k("AR-MAX XBOX part 8",null,"icons/zip.svg","saves/AR-MAX-XBOX_8.zip","64",p),new A.k("AR-MAX Halo 1 and 2",null,"icons/zip.svg","saves/AR-MAX-XBOX_Halo-1-and-2.zip","16",p),new A.k("Mega-X-Key part 1",null,"icons/zip.svg","saves/Mega-x-Saves_1.zip","64",p),new A.k("Mega-X-Key part 2",null,"icons/zip.svg","saves/Mega-x-Saves_2.zip","8",p),new A.k("nfl2K5rosters.com part 1",null,"icons/zip.svg","saves/nfl2k5rosters.com_1.zip","32",p),new A.k("nfl2K5rosters.com part 2",null,"icons/zip.svg","saves/nfl2k5rosters.com_2.zip","32",p),new A.k("nfl2K5rosters.com part 3",null,"icons/zip.svg","saves/nfl2k5rosters.com_3.zip","32",p),new A.k("nfl2K5rosters.com Capa historic rosters 3",null,"icons/zip.svg","saves/Capa_New_Historic3.2krosters.zip","32",p)],t.x),t.bF),$async$b1)
+return A.T(q.ao("Select Curated Save",A.m([new A.j("AR-MAX XBOX part 1",null,"icons/zip.svg","saves/AR-MAX-XBOX_1.zip","64",p),new A.j("AR-MAX XBOX part 2",null,"icons/zip.svg","saves/AR-MAX-XBOX_2.zip","64",p),new A.j("AR-MAX XBOX part 3",null,"icons/zip.svg","saves/AR-MAX-XBOX_3.zip","64",p),new A.j("AR-MAX XBOX part 5",null,"icons/zip.svg","saves/AR-MAX-XBOX_5.zip","64",p),new A.j("AR-MAX XBOX part 7",null,"icons/zip.svg","saves/AR-MAX-XBOX_7.zip","64",p),new A.j("AR-MAX XBOX part 2",null,"icons/zip.svg","saves/AR-MAX-XBOX_2.zip","64",p),new A.j("AR-MAX XBOX part 4",null,"icons/zip.svg","saves/AR-MAX-XBOX_4.zip","64",p),new A.j("AR-MAX XBOX part 6",null,"icons/zip.svg","saves/AR-MAX-XBOX_6.zip","64",p),new A.j("AR-MAX XBOX part 8",null,"icons/zip.svg","saves/AR-MAX-XBOX_8.zip","64",p),new A.j("AR-MAX Halo 1 and 2",null,"icons/zip.svg","saves/AR-MAX-XBOX_Halo-1-and-2.zip","16",p),new A.j("Mega-X-Key part 1",null,"icons/zip.svg","saves/Mega-x-Saves_1.zip","64",p),new A.j("Mega-X-Key part 2",null,"icons/zip.svg","saves/Mega-x-Saves_2.zip","8",p),new A.j("nfl2K5rosters.com part 1",null,"icons/zip.svg","saves/nfl2k5rosters.com_1.zip","32",p),new A.j("nfl2K5rosters.com part 2",null,"icons/zip.svg","saves/nfl2k5rosters.com_2.zip","32",p),new A.j("nfl2K5rosters.com part 3",null,"icons/zip.svg","saves/nfl2k5rosters.com_3.zip","32",p),new A.j("nfl2K5rosters.com Capa historic rosters 3",null,"icons/zip.svg","saves/Capa_New_Historic3.2krosters.zip","32",p)],t.x),t.bF),$async$b1)
 case 2:o=b
 if(o!=null){p=o.d
 if(p!=null&&B.f.al(p,"http"))A.h(A.c(v.G.window).open(p,"_blank"))
@@ -8296,7 +8296,7 @@ e=t.m
 s=10
 return A.T(A.hn(A.c(a.fetch(f)),e),$async$ah)
 case 10:m=a3
-if(!A.a0(m.ok)){b=A.ac("Server responded with "+A.j(A.lc(m,"status",t.S)))
+if(!A.a0(m.ok)){b=A.ac("Server responded with "+A.k(A.lc(m,"status",t.S)))
 throw A.e(b)}s=11
 return A.T(A.hn(A.c(m.blob()),e),$async$ah)
 case 11:l=a3
@@ -8329,7 +8329,7 @@ break
 case 7:p=6
 a0=o.pop()
 g=A.N(a0)
-n.I("Download Error","Error downloading from server: "+A.j(g))
+n.I("Download Error","Error downloading from server: "+A.k(g))
 s=9
 break
 case 6:s=2
@@ -8341,7 +8341,7 @@ aY(){var s=0,r=A.a8(t.H),q=this,p,o
 var $async$aY=A.a9(function(a,b){if(a===1)return A.a5(b,r)
 for(;;)switch(s){case 0:p=t.bS
 s=2
-return A.T(q.ao("Select Card Capacity",A.m([new A.k("8 MB (Standard)",8,"icons/OG-XBOX-Card.svg",null,null,p),new A.k("16 MB",16,"icons/OG-XBOX-Card.svg",null,null,p),new A.k("32 MB",32,"icons/OG-XBOX-Card.svg",null,null,p),new A.k("64 MB",64,"icons/OG-XBOX-Card.svg",null,null,p),new A.k("128 MB",128,"icons/OG-XBOX-Card.svg",null,null,p)],t.B),t.S),$async$aY)
+return A.T(q.ao("Select Card Capacity",A.m([new A.j("8 MB (Standard)",8,"icons/OG-XBOX-Card.svg",null,null,p),new A.j("16 MB",16,"icons/OG-XBOX-Card.svg",null,null,p),new A.j("32 MB",32,"icons/OG-XBOX-Card.svg",null,null,p),new A.j("64 MB",64,"icons/OG-XBOX-Card.svg",null,null,p),new A.j("128 MB",128,"icons/OG-XBOX-Card.svg",null,null,p)],t.B),t.S),$async$aY)
 case 2:o=b
 if(o!=null)q.d7(o)
 return A.a6(null,r)}})
@@ -8365,7 +8365,7 @@ try{B.a.i(q.a,c,new A.aQ(A.dF(new A.aM(a))))
 B.a.i(q.b,c,b)
 q.X()
 q.C("Memory Unit Loaded in Slot "+(c===0?"A":"B"))}catch(r){s=A.N(r)
-q.I("Load Error","Error loading Memory Unit: "+A.j(s))}},
+q.I("Load Error","Error loading Memory Unit: "+A.k(s))}},
 dv(a,b){var s,r,q,p=this,o=p.a
 if(!(b<2))return A.a(o,b)
 s=o[b]
@@ -8373,7 +8373,7 @@ if(s==null)return
 try{new A.aH(s.a).aH(a)
 p.X()
 p.C("ZIP Imported into Slot "+(b===0?"A":"B"))}catch(q){r=A.N(q)
-p.I("Import Error","Error importing ZIP: "+A.j(r))}},
+p.I("Import Error","Error importing ZIP: "+A.k(r))}},
 az(a){var s=0,r=A.a8(t.H),q,p=this,o,n,m,l
 var $async$az=A.a9(function(b,c){if(b===1)return A.a5(c,r)
 for(;;)switch(s){case 0:l=A.c(new v.G.FileReader())
@@ -8407,7 +8407,7 @@ try{B.a.i(q.a,q.c,new A.aQ(A.dF(new A.aM(a))))
 B.a.i(q.b,q.c,b)
 q.X()
 q.C("Memory Unit Loaded in Slot "+(q.c===0?"A":"B"))}catch(r){s=A.N(r)
-q.I("Load Error","Error loading Memory Unit: "+A.j(s))}},
+q.I("Load Error","Error loading Memory Unit: "+A.k(s))}},
 d7(a){var s,r,q,p,o,n=this
 try{s=a*1024*1024
 B.a.i(n.a,n.c,new A.aQ(A.dF(new A.aM(A.hA(s)))))
@@ -8416,7 +8416,7 @@ B.a.i(n.b,n.c,"new_card_"+q+"mb.img")
 n.X()
 p=n.c===0?"A":"B"
 n.C("New "+q+"MB Memory Unit Created in Slot "+p)}catch(o){r=A.N(o)
-n.I("Creation Error","Error creating Memory Unit: "+A.j(r))}},
+n.I("Creation Error","Error creating Memory Unit: "+A.k(r))}},
 c3(a){var s,r,q=this,p=q.a,o=q.c
 if(!(o<2))return A.a(p,o)
 o=p[o]
@@ -8424,7 +8424,7 @@ if(o==null)return
 try{new A.aH(o.a).aH(a)
 q.X()
 q.C("ZIP Imported Successfully")}catch(r){s=A.N(r)
-q.I("Import Error","Error importing ZIP: "+A.j(s))}},
+q.I("Import Error","Error importing ZIP: "+A.k(s))}},
 X(){var s,r,q,p=this,o="Empty",n="_infoDevice",m="_infoCapacity",l="_infoUsed",k=p.as
 k===$&&A.b("_slotAName")
 s=p.b
@@ -8468,7 +8468,7 @@ k.innerHTML=""
 p.ap()
 return}q=p.k4
 q===$&&A.b(n)
-q.innerHTML="<strong>Device:</strong> "+A.j(s[r])
+q.innerHTML="<strong>Device:</strong> "+A.k(s[r])
 r=p.ok
 r===$&&A.b(m)
 s=p.c
@@ -8642,7 +8642,7 @@ break}m[l].cu(a)
 p.X()
 p.ap()
 p.C("Game Folder Deleted")}catch(k){o=A.N(k)
-p.I("Delete Error","Error deleting title: "+A.j(o))}case 1:return A.a6(q,r)}})
+p.I("Delete Error","Error deleting title: "+A.k(o))}case 1:return A.a6(q,r)}})
 return A.a7($async$aT,r)},
 aS(){var s=0,r=A.a8(t.H),q,p=this,o,n,m,l,k,j
 var $async$aS=A.a9(function(a,b){if(a===1)return A.a5(b,r)
@@ -8656,9 +8656,9 @@ j===$&&A.b("_viewGame")
 j=A.aE(j.textContent)
 m=p.p3
 m===$&&A.b("_viewSave")
-o=A.j(j)+"/"+A.j(A.aE(m.textContent))
+o=A.k(j)+"/"+A.k(A.aE(m.textContent))
 s=3
-return A.T(p.b5("Delete Save",'Are you sure you want to delete "'+A.j(o)+'"?'),$async$aS)
+return A.T(p.b5("Delete Save",'Are you sure you want to delete "'+A.k(o)+'"?'),$async$aS)
 case 3:if(b)try{j=p.c
 if(!(j<2)){q=A.a(k,j)
 s=1
@@ -8666,7 +8666,7 @@ break}k[j].cu(o)
 p.X()
 p.ap()
 p.C("Save Deleted")}catch(i){n=A.N(i)
-p.I("Delete Error","Error deleting: "+A.j(n))}case 1:return A.a6(q,r)}})
+p.I("Delete Error","Error deleting: "+A.k(n))}case 1:return A.a6(q,r)}})
 return A.a7($async$aS,r)},
 aV(){var s=0,r=A.a8(t.H),q,p=this,o,n,m,l,k,j,i,h,g,f,e,d
 var $async$aV=A.a9(function(a,b){if(a===1)return A.a5(b,r)
@@ -8680,13 +8680,13 @@ l===$&&A.b("_viewGame")
 l=A.aE(l.textContent)
 k=p.p3
 k===$&&A.b("_viewSave")
-o=A.j(l)+"/"+A.j(A.aE(k.textContent))
+o=A.k(l)+"/"+A.k(A.aE(k.textContent))
 d=d===0
 j=d?1:0
 i=d?"Slot B":"Slot A"
 d=t.U
-h=A.m([new A.k("Export Save (.zip)","zip","icons/zip.svg",null,null,d)],t.D)
-if(e[j]!=null)B.a.p(h,new A.k("Transfer to "+i,"transfer","icons/inbox.svg",null,null,d))
+h=A.m([new A.j("Export Save (.zip)","zip","icons/zip.svg",null,null,d)],t.D)
+if(e[j]!=null)B.a.p(h,new A.j("Transfer to "+i,"transfer","icons/inbox.svg",null,null,d))
 s=3
 return A.T(p.ao("Save Options",h,t.N),$async$aV)
 case 3:g=b
@@ -8695,8 +8695,8 @@ if(!(d<2)){q=A.a(e,d)
 s=1
 break}n=e[d].cw(o)
 p.C("Exporting...")
-p.bo(n,A.j(A.aE(k.textContent))+".zip")}catch(c){m=A.N(c)
-p.I("Export Error","Error exporting save: "+A.j(m))}else if(g==="transfer")p.e_(o)
+p.bo(n,A.k(A.aE(k.textContent))+".zip")}catch(c){m=A.N(c)
+p.I("Export Error","Error exporting save: "+A.k(m))}else if(g==="transfer")p.e_(o)
 case 1:return A.a6(q,r)}})
 return A.a7($async$aV,r)},
 e_(a){var s,r,q,p=this,o=p.c===0?1:0,n=p.a,m=B.a.N(n,o),l=p.c
@@ -8710,7 +8710,7 @@ l=t.p.a(s)
 new A.aH(m.a).aH(l)
 p.X()
 p.C("Transfer to "+(J.dp(o,0)?"Slot A":"Slot B")+" Complete")}catch(q){r=A.N(q)
-p.I("Transfer Error","Error during transfer: "+A.j(r))}},
+p.I("Transfer Error","Error during transfer: "+A.k(r))}},
 dk(){var s,r,q,p=this,o=p.a,n=p.c
 if(!(n<2))return A.a(o,n)
 if(o[n]==null)return
@@ -8723,7 +8723,7 @@ r=p.c
 if(!(r<2))return A.a(o,r)
 r=o[r]
 p.bo(n,r==null?"card.img":r)}catch(q){s=A.N(q)
-p.I("Export Error","Error exporting card: "+A.j(s))}},
+p.I("Export Error","Error exporting card: "+A.k(s))}},
 bo(a,b){var s=v.G,r=A.c(new s.Blob(A.m([a],t.r))),q=A.n(s.URL.createObjectURL(r)),p=A.c(A.c(s.document).createElement("a"))
 p.href=q
 p.download=b
@@ -8852,7 +8852,7 @@ A.ev.prototype={
 $1(a){var s,r="icons/link.svg",q=null
 A.c(a)
 s=t.U
-this.a.ao("Other Links",A.m([new A.k("PS2 Save Manager",q,r,"https://bad-al.github.io/mymc_web/",q,s),new A.k("Game Faqs XBOX Saves",q,r,"https://gamefaqs.gamespot.com/pc/932095-halo-2/saves",q,s),new A.k("NFL2K4 Gamesave Editor",q,r,"https://bad-al.github.io/nfl2k4tool_web/",q,s),new A.k("NFL2K5 Gamesave Editor",q,r,"https://bad-al.github.io/nfl2k5tool_web/",q,s),new A.k("OG XBOX Emulator",q,r,"https://xemu.app/",q,s)],t.D),t.N)},
+this.a.ao("Other Links",A.m([new A.j("XEMU Save Manager iso",q,r,"https://github.com/BAD-AL/xbmut_web/tree/main/on_device_save_mgmt",q,s),new A.j("PS2 Save Manager",q,r,"https://bad-al.github.io/mymc_web/",q,s),new A.j("Game Faqs XBOX Saves",q,r,"https://gamefaqs.gamespot.com/pc/932095-halo-2/saves",q,s),new A.j("NFL2K4 Gamesave Editor",q,r,"https://bad-al.github.io/nfl2k4tool_web/",q,s),new A.j("NFL2K5 Gamesave Editor",q,r,"https://bad-al.github.io/nfl2k5tool_web/",q,s),new A.j("OG XBOX Emulator",q,r,"https://xemu.app/",q,s)],t.D),t.N)},
 $S:0}
 A.ew.prototype={
 $1(a){A.c(a)
@@ -9007,7 +9007,7 @@ $1(a){var s=t.bH.a(a).d
 s===$&&A.b("name")
 return s===this.a},
 $S:25}
-A.k.prototype={};(function aliases(){var s=J.ax.prototype
+A.j.prototype={};(function aliases(){var s=J.ax.prototype
 s.cU=s.j
 s=A.p.prototype
 s.cV=s.av})();(function installTearOffs(){var s=hunkHelpers._static_1,r=hunkHelpers._static_0
@@ -9016,7 +9016,7 @@ s(A,"l5","k0",4)
 s(A,"l6","k1",4)
 r(A,"iA","kZ",1)})();(function inheritance(){var s=hunkHelpers.mixin,r=hunkHelpers.inherit,q=hunkHelpers.inheritMany
 r(A.x,null)
-q(A.x,[A.fW,J.cC,A.bK,J.an,A.A,A.aw,A.dZ,A.i,A.ap,A.bC,A.bQ,A.bs,A.S,A.aP,A.p,A.e3,A.dV,A.bt,A.c_,A.bB,A.dS,A.f1,A.fp,A.ad,A.da,A.fm,A.fk,A.d6,A.W,A.d8,A.at,A.t,A.d7,A.cY,A.df,A.c5,A.bb,A.dd,A.bU,A.ab,A.co,A.f0,A.fs,A.dh,A.aG,A.b2,A.cQ,A.bL,A.f5,A.cv,A.K,A.dg,A.be,A.dU,A.db,A.dc,A.cr,A.am,A.dy,A.du,A.dL,A.dr,A.dz,A.dx,A.cj,A.ci,A.bJ,A.dw,A.cA,A.cR,A.eV,A.ds,A.d5,A.eU,A.c4,A.fu,A.eW,A.dB,A.a3,A.bS,A.fj,A.dN,A.dO,A.fS,A.bR,A.b3,A.cs,A.dK,A.X,A.dE,A.aQ,A.ak,A.aj,A.aH,A.ct,A.cu,A.aM,A.e7,A.k])
+q(A.x,[A.fW,J.cC,A.bK,J.an,A.A,A.aw,A.dZ,A.i,A.ap,A.bC,A.bQ,A.bs,A.S,A.aP,A.p,A.e3,A.dV,A.bt,A.c_,A.bB,A.dS,A.f1,A.fp,A.ad,A.da,A.fm,A.fk,A.d6,A.W,A.d8,A.at,A.t,A.d7,A.cY,A.df,A.c5,A.bb,A.dd,A.bU,A.ab,A.co,A.f0,A.fs,A.dh,A.aG,A.b2,A.cQ,A.bL,A.f5,A.cv,A.K,A.dg,A.be,A.dU,A.db,A.dc,A.cr,A.am,A.dy,A.du,A.dL,A.dr,A.dz,A.dx,A.cj,A.ci,A.bJ,A.dw,A.cA,A.cR,A.eV,A.ds,A.d5,A.eU,A.c4,A.fu,A.eW,A.dB,A.a3,A.bS,A.fj,A.dN,A.dO,A.fS,A.bR,A.b3,A.cs,A.dK,A.X,A.dE,A.aQ,A.ak,A.aj,A.aH,A.ct,A.cu,A.aM,A.e7,A.j])
 q(J.cC,[J.bu,J.bw,J.by,J.b5,J.b6,J.bx,J.b4])
 q(J.by,[J.ax,J.w,A.az,A.bE])
 q(J.ax,[J.cS,J.bN,J.ao])
@@ -9074,7 +9074,7 @@ A.ki(v.typeUniverse,JSON.parse('{"ao":"ax","cS":"ax","bN":"ax","lw":"az","w":{"l
 A.kh(v.typeUniverse,JSON.parse('{"bq":1,"bg":1,"P":1,"bZ":1,"co":2}'))
 var u={c:"Error handler must accept one Object or one Object and a StackTrace as arguments, and return a value of the returned future's type"}
 var t=(function rtii(){var s=A.dm
-return{n:s("W"),o:s("bp"),C:s("A"),y:s("X"),Z:s("aI"),k:s("cB"),V:s("i<@>"),d:s("i<f>"),I:s("w<am>"),G:s("w<X>"),e:s("w<y>"),r:s("w<aA>"),x:s("w<k<k<@>>>"),D:s("w<k<H>>"),B:s("w<k<f>>"),s:s("w<H>"),bq:s("w<d5>"),aL:s("w<c4>"),b:s("w<@>"),t:s("w<f>"),c:s("w<x?>"),cm:s("w<H?>"),aQ:s("w<aQ?>"),T:s("bw"),m:s("y"),g:s("ao"),da:s("Z<@>"),bp:s("l<cB>"),f:s("l<l<f>>"),aY:s("l<H>"),b5:s("l<d0>"),J:s("l<c4>"),cK:s("l<@>"),L:s("l<f>"),a:s("b8"),E:s("a_"),cr:s("aA"),P:s("K"),K:s("x"),cY:s("ly"),cz:s("bJ"),aT:s("k<k<@>>"),U:s("k<H>"),bF:s("k<@>"),bS:s("k<f>"),l:s("aC"),N:s("H"),bW:s("r"),b7:s("aq"),h:s("C"),p:s("d0"),cB:s("bN"),db:s("bO<am>"),A:s("O<H>"),bH:s("aj"),ag:s("ak"),cp:s("as<G>"),Q:s("aR<y>"),c8:s("t<G>"),_:s("t<@>"),b1:s("t<f>"),v:s("G"),bG:s("G(x)"),j:s("G(H)"),i:s("u"),z:s("@"),O:s("@()"),w:s("@(x)"),R:s("@(x,aC)"),S:s("f"),bc:s("ag<K>?"),b2:s("y?"),X:s("x?"),aD:s("H?"),F:s("at<@,@>?"),W:s("dd?"),u:s("G?"),dd:s("u?"),a3:s("f?"),ae:s("aZ?"),Y:s("~()?"),q:s("aZ"),H:s("~"),M:s("~()")}})();(function constants(){var s=hunkHelpers.makeConstList
+return{n:s("W"),o:s("bp"),C:s("A"),y:s("X"),Z:s("aI"),k:s("cB"),V:s("i<@>"),d:s("i<f>"),I:s("w<am>"),G:s("w<X>"),e:s("w<y>"),r:s("w<aA>"),x:s("w<j<j<@>>>"),D:s("w<j<H>>"),B:s("w<j<f>>"),s:s("w<H>"),bq:s("w<d5>"),aL:s("w<c4>"),b:s("w<@>"),t:s("w<f>"),c:s("w<x?>"),cm:s("w<H?>"),aQ:s("w<aQ?>"),T:s("bw"),m:s("y"),g:s("ao"),da:s("Z<@>"),bp:s("l<cB>"),f:s("l<l<f>>"),aY:s("l<H>"),b5:s("l<d0>"),J:s("l<c4>"),cK:s("l<@>"),L:s("l<f>"),a:s("b8"),E:s("a_"),cr:s("aA"),P:s("K"),K:s("x"),cY:s("ly"),cz:s("bJ"),aT:s("j<j<@>>"),U:s("j<H>"),bF:s("j<@>"),bS:s("j<f>"),l:s("aC"),N:s("H"),bW:s("r"),b7:s("aq"),h:s("C"),p:s("d0"),cB:s("bN"),db:s("bO<am>"),A:s("O<H>"),bH:s("aj"),ag:s("ak"),cp:s("as<G>"),Q:s("aR<y>"),c8:s("t<G>"),_:s("t<@>"),b1:s("t<f>"),v:s("G"),bG:s("G(x)"),j:s("G(H)"),i:s("u"),z:s("@"),O:s("@()"),w:s("@(x)"),R:s("@(x,aC)"),S:s("f"),bc:s("ag<K>?"),b2:s("y?"),X:s("x?"),aD:s("H?"),F:s("at<@,@>?"),W:s("dd?"),u:s("G?"),dd:s("u?"),a3:s("f?"),ae:s("aZ?"),Y:s("~()?"),q:s("aZ"),H:s("~"),M:s("~()")}})();(function constants(){var s=hunkHelpers.makeConstList
 B.V=J.cC.prototype
 B.a=J.w.prototype
 B.W=J.bu.prototype

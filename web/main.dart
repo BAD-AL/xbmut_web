@@ -531,6 +531,7 @@ class WebXbmutApp {
 
     _otherLinksBtn.addEventListener('click', (web.MouseEvent e) {
        _showSelection<String>('Other Links', [
+         SelectionOption(label: 'XEMU Save Manager iso', url: 'https://github.com/BAD-AL/xbmut_web/tree/main/on_device_save_mgmt', iconPath: 'icons/link.svg'),
          SelectionOption(label: 'PS2 Save Manager', url: 'https://bad-al.github.io/mymc_web/', iconPath: 'icons/link.svg'),
          SelectionOption(label: 'Game Faqs XBOX Saves', url: 'https://gamefaqs.gamespot.com/pc/932095-halo-2/saves', iconPath: 'icons/link.svg'),
          SelectionOption(label: 'NFL2K4 Gamesave Editor', url: 'https://bad-al.github.io/nfl2k4tool_web/', iconPath: 'icons/link.svg'),
