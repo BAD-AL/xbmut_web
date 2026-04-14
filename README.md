@@ -18,7 +18,7 @@ This project is a single-page, web application built with Dart that provides a u
 *   **Delete Saves/Games:** Remove unwanted saves or entire game data from the memory unit.
 *   **Export Card:** Save the entire modified memory unit as a `.bin` file.
 *   **Export Save:** Export individual saves as `.zip` files.
-*   **Create New Memory Unit:** Initialize a new, blank 8MB memory unit directly in the browser.
+*   **Create New Memory Unit:** Initialize a new, blank memory unit (8MB, 16MB, 32MB, 64MB, or 128MB) directly in the browser.
 *   **Modern UI:** A visually appealing, single-page interface inspired by the XEMU dashboard aesthetic.
 
 ## Build and Run

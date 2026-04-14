@@ -462,7 +462,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "5450ecb19a7e7c9f377448dd2ee5f56de09cb037"
+      resolved-ref: afbc5d241293faf3dfd6f58ae3ad7c6f2ea0f6b2
       url: "https://github.com/BAD-AL/xbox_memory_unit_tool"
     source: git
     version: "1.0.0"

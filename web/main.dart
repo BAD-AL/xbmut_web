@@ -10,6 +10,7 @@ void main() {
 }
 
 class WebXbmutApp {
+  static const String version = '1.1.0';
   final List<XboxMemoryUnit?> _mus = [null, null];
   final List<String?> _fileNames = [null, null];
   int _activeSlot = 0;
@@ -127,6 +128,8 @@ class WebXbmutApp {
     _viewFolder = web.document.querySelector('#view-folder') as web.HTMLElement;
     _viewSize = web.document.querySelector('#view-size') as web.HTMLElement;
     _viewDate = web.document.querySelector('#view-date') as web.HTMLElement;
+
+    _helpOverlay.querySelector('h2')?.textContent = 'User Manual (v$version)';
 
     _setupEventListeners();
     _addCreateNewButton();
@@ -744,6 +747,7 @@ class WebXbmutApp {
       SelectionOption(label: '16 MB', value: 16, iconPath: 'icons/OG-XBOX-Card.svg'),
       SelectionOption(label: '32 MB', value: 32, iconPath: 'icons/OG-XBOX-Card.svg'),
       SelectionOption(label: '64 MB', value: 64, iconPath: 'icons/OG-XBOX-Card.svg'),
+      SelectionOption(label: '128 MB', value: 128, iconPath: 'icons/OG-XBOX-Card.svg'),
     ]);
 
     if (result != null) {
