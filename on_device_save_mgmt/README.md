@@ -28,10 +28,8 @@ Run Simple Save Manager:
 4. Choose copy/delete operations.
 
 
-
-
-![Save mgr](img/8.1-Use-Script.png)
 ![Save mgr](img/8.2-Use-Script.png)
+![Save mgr](img/8.1-Use-Script.png)
 ![Save mgr](img/8.3-Use-Script.png)
 
 
