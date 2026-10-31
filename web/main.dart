@@ -10,7 +10,7 @@ void main() {
 }
 
 class WebXbmutApp {
-  static const String version = '1.1.0';
+  static const String version = '1.1.1';
   final List<XboxMemoryUnit?> _mus = [null, null];
   final List<String?> _fileNames = [null, null];
   int _activeSlot = 0;
@@ -425,6 +425,11 @@ class WebXbmutApp {
       el.addEventListener('click', (web.Event e) {
         _selectionOverlay.style.display = 'none';
         if (!isExternal) {
+          // Run synchronously inside this trusted click handler so actions
+          // like opening a native file picker retain user-activation
+          // (deferring via the awaited Future below loses it in some
+          // browsers, e.g. Brave, which then silently blocks the dialog).
+          option.onSelect?.call();
           completer.complete(option.value ?? option as T);
         } else {
           completer.complete(null);
@@ -598,6 +603,11 @@ class WebXbmutApp {
     }.toJS);
 
     final loadAction = (web.Event e) {
+      // _fileInput.click() below bubbles a click up to the dropzone (the
+      // input is inside it); without this guard that re-enters loadAction
+      // and preventDefault()s the very click that's supposed to open the
+      // native file chooser, silently cancelling it.
+      if (e.target == _fileInput) return;
       e.preventDefault();
       _handleLoadSource();
     };
@@ -669,13 +679,16 @@ class WebXbmutApp {
 
   Future<void> _handleLoadSource() async {
     final result = await _showSelection<String>('Load Source', [
-      SelectionOption(label: 'From Computer', value: 'local', iconPath: 'icons/folder.svg'),
+      SelectionOption(
+        label: 'From Computer',
+        value: 'local',
+        iconPath: 'icons/folder.svg',
+        onSelect: () => _fileInput.click(),
+      ),
       SelectionOption(label: 'From Server (Curated)', value: 'server', iconPath: 'icons/logo_orb.svg'),
     ]);
 
-    if (result == 'local') {
-      _fileInput.click();
-    } else if (result == 'server') {
+    if (result == 'server') {
       _handleLoadFromServer();
     }
   }
@@ -1130,6 +1143,7 @@ class SelectionOption<T> {
   final String? iconPath;
   final String? url;
   final String? tag;
+  final void Function()? onSelect;
 
   SelectionOption({
     required this.label,
@@ -1137,5 +1151,6 @@ class SelectionOption<T> {
     this.iconPath,
     this.url,
     this.tag,
+    this.onSelect,
   });
 }
